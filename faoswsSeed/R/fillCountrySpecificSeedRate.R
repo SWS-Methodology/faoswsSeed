@@ -13,10 +13,14 @@
 
 fillCountrySpecificSeedRate = function(data,
     countrySpecificData = getCountrySpecificSeedRate()){
+    
+    ## Data Quality Checks
+    stopifnot(is(data, "data.table"))
+    stopifnot(is(countrySpecificData, "data.table"))
+    
     ## Fill in the country Specific rates          
     data[countrySpecificData,
          `:=`(c("Value_seedRate", "flagObservationStatus_seedRate"),
               list(i.Value_seedRate, i.flagObservationStatus_seedRate)),
          allow.cartesian = TRUE]
-    data
 }

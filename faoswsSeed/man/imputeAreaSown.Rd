@@ -23,10 +23,10 @@ the area harvested variable.}
 \item{flagObsAreaSown}{The column name of data which contains the
 observation flag for the area sown variable.}
 
-\item{imputedFlag}{Currently unused: Michael?}
-
-\item{flagObsAreaSown}{The column name of data which contains the
+\item{flagObsAreaHarvested}{The column name of data which contains the
 observation flag for the area harvested variable.}
+
+\item{imputedFlag}{Currently unused: Michael?}
 }
 \value{
 No object is returned, instead the underlying data.table object is

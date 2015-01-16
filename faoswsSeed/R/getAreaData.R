@@ -26,6 +26,12 @@ getAreaData = function(dataContext, areaSownElementCode = "5212",
                        areaHarvestedElementCode = "5312",
                        seedElementCode = "5525"){
     
+    ## Data Quality Checks
+    stopifnot(is(dataContext, "DatasetKey"))
+    stopifnot(is(areaSownElementCode, "character"))
+    stopifnot(is(areaHarvestedElementCode, "character"))
+    stopifnot(is(seedElementCode, "character"))
+    
     ## Set some name variables needed to pull this data
     areaVar = "geographicAreaM49"
     yearVar = "timePointYears"
@@ -83,5 +89,5 @@ getAreaData = function(dataContext, areaSownElementCode = "5212",
     setkeyv(query, c("geographicAreaM49", "measuredItemCPC", "timePointYears"))
     ## list(query = query,
     ##      prefixTuples = prefixTuples)
-    query
+    return(query)
 }

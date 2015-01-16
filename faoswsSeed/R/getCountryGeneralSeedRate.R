@@ -6,6 +6,10 @@
 ##' commodity level, as opposed to the commodity-country level in
 ##' getCountrySpecificSeedRate().
 ##' 
+##' The seed rates that are pulled from the database are assumed to be official
+##' values.  That is, the observation status flags of all of these observations
+##' are set to "".
+##' 
 ##' @return The data.table object with specific seed rate data.
 ##' 
 ##' @export

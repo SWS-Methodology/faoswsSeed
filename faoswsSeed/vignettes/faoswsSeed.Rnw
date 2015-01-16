@@ -59,9 +59,9 @@
 }
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+% \SweaveOpts{concordance=TRUE}
 
-<<setup, include=FALSE, cache=FALSE>>=
+<<setup, include=FALSE, cache=FALSE, echo=FALSE>>=
 library(knitr)
 opts_chunk$set(fig.path = 'figure/', fig.align = 'center', fig.show = 'hold',
                warning = FALSE, message = FALSE, error = FALSE, tidy = FALSE,
@@ -104,7 +104,7 @@ library(ggplot2)
 Now, we need to get a data.table object from the working system.  To do this,
 we'll need a token for the R session.  To get this token, you'll need to create
 an .xml file that references the appropriate dataset: see the .xml file in the
-sws_seed repository.  Alternatively, you can create an .xml file with the Code
+sws\_seed repository.  Alternatively, you can create an .xml file with the Code
 tag set to agriculture and four SelectableDimension's: geographicAreaM49, 
 measuredItemCPC, measuredElement, timePointYears.  Alternatively, you can use
 the token in the code below.
@@ -163,13 +163,13 @@ data[, Value_measuredElement_5312]
 \subsection{Estimate Seed Rate}
 
 The next step in getting the seed usage is to estimate the seeding rate.  The
-database stores two tables, default_seed_rate and specific_seed_rate, which
+database stores two tables, default\_seed\_rate and specific\_seed\_rate, which
 contain estimates for seed rates.  The specific seed rate table contains values
 for country commodity pairs, while the default seed rate contains average
 values for commodities overall.  It would therefore be preferable to use the
-specific_seed_rate table, but values are not always available for all
-countries.  Thus, the default_seed_rate table is used when entries are not 
-available in the specific_seed_rate table.
+specific\_seed\_rate table, but values are not always available for all
+countries.  Thus, the default\_seed\_rate table is used when entries are not 
+available in the specific\_seed\_rate table.
 
 <<>>=
 countrySpecificData = getCountrySpecificSeedRate()
@@ -180,7 +180,7 @@ head(data, 1)
 data[, Value_seedRate]
 @
 
-The getCountrySpecificSeedRate function simply pulls the specific_seed_rate
+The getCountrySpecificSeedRate function simply pulls the specific\_seed\_rate
 table from the database.  This table is also the default value for
 countrySpecificData in the fillCountrySpecificSeedRate function, but it is
 manually created here for clarity.  The fillCountrySpecificSeedRate function
@@ -200,9 +200,9 @@ data[, Value_seedRate]
 Note that nothing has changed after running this second function.  This is
 expected, as the seed rate value has been estimated from the specific data.
 
-If the specific_seed_rate table had not provided a value for this
+If the specific\_seed\_rate table had not provided a value for this
 country/commodity pair, then the first code block in this section would have
-set Value_seedRate to NA.  Then, this second code block would have updated the
+set Value\_seedRate to NA.  Then, this second code block would have updated the
 NA to a default value from the default table.
 
 \subsection{Estimate Seed Usage}

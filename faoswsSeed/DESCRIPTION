@@ -11,9 +11,9 @@ Description: This package provides all the functions for imputation of seed
 URL: https://github.com/rockclimber112358/sws_seed
 License: GPL (>= 3)
 Imports:
-    data.table (>= 1.9.2),
+    data.table (>= 1.9.2)
 Depends:
-    faoswsFlag (>= 0.1.1),
+    faoswsFlag (>= 0.1.1), faoswsUtil (>= 0.1.2), faosws (>= 0.3.2)
 LazyData: yes
 ZipData: no
 VignetteBuilder: knitr

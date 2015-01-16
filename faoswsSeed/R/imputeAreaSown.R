@@ -14,7 +14,7 @@
 ##' the area harvested variable.
 ##' @param flagObsAreaSown The column name of data which contains the
 ##' observation flag for the area sown variable.
-##' @param flagObsAreaSown The column name of data which contains the
+##' @param flagObsAreaHarvested The column name of data which contains the
 ##' observation flag for the area harvested variable.
 ##' @param imputedFlag Currently unused: Michael?
 ##' 
@@ -25,10 +25,19 @@
 ##' 
 
 imputeAreaSown = function(data, valueAreaSown = "Value_measuredElement_5212",
-                          valueAreaHarvested = "Value_measuredElement_5312",
-                          flagObsAreaSown = "flagObservationStatus_measuredElement_5212",
-                          flagObsAreaHarvested = "flagObservationStatus_measuredElement_5312",
-                          imputedFlag = "i"){
+          valueAreaHarvested = "Value_measuredElement_5312",
+          flagObsAreaSown = "flagObservationStatus_measuredElement_5212",
+          flagObsAreaHarvested = "flagObservationStatus_measuredElement_5312",
+          imputedFlag = "i"){
+    
+    ## Data Quality Checks
+    stopifnot(is(data, "data.table"))
+    columnNames = c(valueAreaSown, valueAreaHarvested, flagAreaSown,
+                    flagAreaHarvested)
+    stopifnot(is(columnNames, "character"))
+    stopifnot(columnNames %in% colnames(data))
+    ## Implement a check that the imputedFlag is a valid flag.
+    
     if(all(is.na(data[[valueAreaSown]]))){
         data[, valueAreaSown := get(valueAreaHarvested), with = FALSE]
         data[, flagObsAreaSown := get(flagObsAreaHarvested), with = FALSE]
@@ -42,4 +51,8 @@ imputeAreaSown = function(data, valueAreaSown = "Value_measuredElement_5212",
         data[(replaceIndex), flagObsAreaSown := get(flagObsAreaHarvested),
              with = FALSE]
     }
+    ## If the last operation was a data.table operation, the entire data.table
+    ## may be returned.  Avoid that by assigning a dummy variable as the last
+    ## operation.
+    dummy = 0
 }

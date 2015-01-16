@@ -16,6 +16,11 @@
 
 fillGeneralSeedRate = function(data,
                                generalSeedData = getCountryGeneralSeedRate()){
+
+    ## Data Quality Checks
+    stopifnot(is(data, "data.table"))
+    stopifnot(is(generalSeedData, "data.table"))
+    
     ## fill in the general rates
     okey = key(data)
     setkeyv(data, key(generalSeedData))

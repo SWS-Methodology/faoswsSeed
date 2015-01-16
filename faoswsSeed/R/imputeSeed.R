@@ -47,6 +47,17 @@ imputeSeed = function(data,
                       seedRateFlag = "flagObservationStatus_seedRate",
                       missingFlag = "M", imputedFlag = "i",
                       byKey = key(data)[1:2]){
+
+    ## Data Quality Checks
+    stopifnot(is(data, "data.table"))
+    columnNames = c(seedValue, seedMethodFlag, seedObsFlag,
+                    areaSownValue, areaSownObsFlag, seedRateValue,
+                    seedRateFlag, byKey)
+    stopifnot(is(columnNames, "character"))
+    stopifnot(columnNames %in% colnames(data))
+    ## Implement a check that imputedFlag and missingFlag are valid flags.
+    ## Maybe consider making two functions in faosws that checks if obs. and
+    ## method flags are valid?
     
     each = function(seedValue = seedValue, seedMethodFlag = seedMethodFlag,
                     seedObsFlag = seedObsFlag, areaSownValue = areaSownValue,
@@ -71,5 +82,9 @@ imputeSeed = function(data,
                      seedRateFlag = get(seedRateFlag),
                      imputedFlag = imputedFlag)), by = byKey]
     data[, `:=`(c(seedRateValue, seedRateFlag), NULL)]
+    ## If the last operation was a data.table operation, the entire data.table
+    ## may be returned.  Avoid that by assigning a dummy variable as the last
+    ## operation.
+    dummy = 0
 }
 
