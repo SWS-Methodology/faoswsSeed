@@ -8,7 +8,7 @@ imputeAreaSown(data, valueAreaSown = "Value_measuredElement_5212",
   valueAreaHarvested = "Value_measuredElement_5312",
   flagObsAreaSown = "flagObservationStatus_measuredElement_5212",
   flagObsAreaHarvested = "flagObservationStatus_measuredElement_5312",
-  imputedFlag = "i")
+  imputedObsFlag = "I", imputedMethodFlag = "e")
 }
 \arguments{
 \item{data}{The data.table object containing the seed data, usually as

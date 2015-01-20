@@ -16,4 +16,9 @@ columns, sets keys).  These default seed rates are provided at the
 commodity level, as opposed to the commodity-country level in
 getCountrySpecificSeedRate().
 }
+\details{
+The seed rates that are pulled from the database are assumed to be official
+values.  That is, the observation status flags of all of these observations
+are set to "".
+}
 

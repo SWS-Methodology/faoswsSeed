@@ -24,8 +24,6 @@
 ##' variable.
 ##' @param seedRateFlag The column name of data which contains the seed rate
 ##' flag.
-##' @param missingFlag A character value indicating a missing value in the 
-##' observation flag.  Currently unused.  Michael?
 ##' @param imputedFlag When the seed value is imputed, what character value
 ##' should be assigned to the seedMethodFlag?
 ##' @param byKey A character vector of the column name(s) of data which should
@@ -45,8 +43,7 @@ imputeSeed = function(data,
                       areaSownObsFlag = "flagObservationStatus_measuredElement_5212",
                       seedRateValue = "Value_seedRate",
                       seedRateFlag = "flagObservationStatus_seedRate",
-                      missingFlag = "M", imputedFlag = "i",
-                      byKey = key(data)[1:2]){
+                      imputedFlag = "i", byKey = key(data)[1:2]){
 
     ## Data Quality Checks
     stopifnot(is(data, "data.table"))
@@ -55,9 +52,7 @@ imputeSeed = function(data,
                     seedRateFlag, byKey)
     stopifnot(is(columnNames, "character"))
     stopifnot(columnNames %in% colnames(data))
-    ## Implement a check that imputedFlag and missingFlag are valid flags.
-    ## Maybe consider making two functions in faosws that checks if obs. and
-    ## method flags are valid?
+    stopifnot(checkMethodFlag(imputedFlag))
     
     each = function(seedValue = seedValue, seedMethodFlag = seedMethodFlag,
                     seedObsFlag = seedObsFlag, areaSownValue = areaSownValue,
@@ -66,11 +61,11 @@ imputeSeed = function(data,
         ## Multiply area sown at time t with seedRate Value at time t-1
         newSeedValue = c(c(areaSownValue, NA) * c(NA, seedRateValue)/1000)[-1]
         replaceIndex = is.na(seedValue) & !is.na(newSeedValue)
-        seedValue[replaceIndex] = newSeedValue
+        seedValue[replaceIndex] = newSeedValue[replaceIndex]
         seedMethodFlag[replaceIndex] = imputedFlag
         seedObsFlag[replaceIndex] =
-            aggregateObservationFlag(areaSownObsFlag, seedRateFlag)
-        list(seedValue, seedMethodFlag, seedObsFlag)        
+            aggregateObservationFlag(areaSownObsFlag, seedRateFlag)[replaceIndex]
+        list(seedValue, seedMethodFlag, seedObsFlag)
     }
     data[, `:=`(c(seedValue, seedMethodFlag, seedObsFlag),
                 each(seedValue = get(seedValue),

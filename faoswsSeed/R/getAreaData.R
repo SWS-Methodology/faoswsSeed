@@ -89,5 +89,25 @@ getAreaData = function(dataContext, areaSownElementCode = "5212",
     setkeyv(query, c("geographicAreaM49", "measuredItemCPC", "timePointYears"))
     ## list(query = query,
     ##      prefixTuples = prefixTuples)
+    
+    cleanData = function(x, class){
+        x = sapply(x, function(y) ifelse(is.null(y), NA, y))
+        if(is(x, "list"))
+            x = do.call("c", x) # coerce list type to vector
+        x = as(x, class)
+        return(x)
+    }
+    
+    ## Adjust data types to avoid later errors
+    for(element in requiredElements){
+        valueVariable = paste0(valuePrefix, element)
+        query[[valueVariable]] = cleanData(query[[valueVariable]], "numeric")
+        methodVariable = paste0(flagMethodPrefix, element)
+        query[[methodVariable]] = cleanData(query[[methodVariable]]
+                                            , "character")
+        obsVariable = paste0(flagObsPrefix, element)
+        query[[obsVariable]] = cleanData(query[[obsVariable]], "character")
+    }
+    
     return(query)
 }

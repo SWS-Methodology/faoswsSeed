@@ -10,8 +10,8 @@ imputeSeed(data, seedValue = "Value_measuredElement_5525",
   areaSownValue = "Value_measuredElement_5212",
   areaSownObsFlag = "flagObservationStatus_measuredElement_5212",
   seedRateValue = "Value_seedRate",
-  seedRateFlag = "flagObservationStatus_seedRate", missingFlag = "M",
-  imputedFlag = "i", byKey = key(data)[1:2])
+  seedRateFlag = "flagObservationStatus_seedRate", imputedFlag = "i",
+  byKey = key(data)[1:2])
 }
 \arguments{
 \item{data}{The data.table object containing the seed data, typically as
@@ -38,14 +38,14 @@ variable.}
 \item{seedRateFlag}{The column name of data which contains the seed rate
 flag.}
 
-\item{missingFlag}{A character value indicating a missing value in the
-observation flag.  Currently unused.  Michael?}
-
 \item{imputedFlag}{When the seed value is imputed, what character value
 should be assigned to the seedMethodFlag?}
 
 \item{byKey}{A character vector of the column name(s) of data which should
 be treated as keys for performing the imputation.}
+
+\item{missingFlag}{A character value indicating a missing value in the
+observation flag.  Currently unused.  Michael?}
 }
 \value{
 No value is returned, instead data is modified by filling in

@@ -16,4 +16,9 @@ columns, converters dimensions to characters, and sets all flags that
 aren't "E" to "").  These rates are provided at the commodity-country level
 as opposed to commodity level in getCountrySpecificSeedRate().
 }
+\details{
+The seed rates that are pulled from the database are assumed to be official
+values.  That is, the observation status flags of all of these observations
+are set to "".
+}
 
