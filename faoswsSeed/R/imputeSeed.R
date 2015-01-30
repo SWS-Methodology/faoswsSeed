@@ -76,10 +76,5 @@ imputeSeed = function(data,
                      seedRateValue = get(seedRateValue),
                      seedRateFlag = get(seedRateFlag),
                      imputedFlag = imputedFlag)), by = byKey]
-    data[, `:=`(c(seedRateValue, seedRateFlag), NULL)]
-    ## If the last operation was a data.table operation, the entire data.table
-    ## may be returned.  Avoid that by assigning a dummy variable as the last
-    ## operation.
-    dummy = 0
+    invisible(data[, `:=`(c(seedRateValue, seedRateFlag), NULL)])
 }
-

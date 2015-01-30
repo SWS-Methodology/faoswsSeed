@@ -100,14 +100,36 @@ getAreaData = function(dataContext, areaSownElementCode = "5212",
     
     ## Adjust data types to avoid later errors
     for(element in requiredElements){
+        warning("Current code fixes issue SWS-797 manually, update when resolved")
         valueVariable = paste0(valuePrefix, element)
-        query[[valueVariable]] = cleanData(query[[valueVariable]], "numeric")
+        query[, c(valueVariable) := cleanData(get(valueVariable), "numeric")]
         methodVariable = paste0(flagMethodPrefix, element)
-        query[[methodVariable]] = cleanData(query[[methodVariable]]
-                                            , "character")
+        query[, c(methodVariable) :=
+                  cleanData(get(methodVariable), "character")]
         obsVariable = paste0(flagObsPrefix, element)
-        query[[obsVariable]] = cleanData(query[[obsVariable]], "character")
+        query[, c(obsVariable) := cleanData(get(obsVariable), "character")]
     }
+
+    ### Some values don't exist in the database, and thus are given NA's.
+    ### However, for our purposes, these should be 0M values.
+    # area sown
+    areaSownVariables = paste0(c("flagObservationStatus",
+                                 "flagMethod"), "_measuredElement_",
+                               areaSownElementCode)
+    query[is.na(get(paste0("Value_measuredElement_", areaSownElementCode))),
+          (areaSownVariables) := list("M", "u")]
+    # area harvested
+    areaHarvestedVariables = paste0(c("flagObservationStatus",
+                                      "flagMethod"), "_measuredElement_",
+                                    areaHarvestedElementCode)
+    query[is.na(get(paste0("Value_measuredElement_", areaHarvestedElementCode))),
+          (areaHarvestedVariables) := list("M", "u")]
+    # seed
+    seedVariables = paste0(c("flagObservationStatus",
+                             "flagMethod"), "_measuredElement_",
+                           seedElementCode)
+    query[is.na(get(paste0("Value_measuredElement_", seedElementCode))),
+          (seedVariables) := list("M", "u")]
     
     return(query)
 }
