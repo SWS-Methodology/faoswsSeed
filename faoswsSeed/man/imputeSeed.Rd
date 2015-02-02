@@ -11,7 +11,7 @@ imputeSeed(data, seedValue = "Value_measuredElement_5525",
   areaSownObsFlag = "flagObservationStatus_measuredElement_5212",
   seedRateValue = "Value_seedRate",
   seedRateFlag = "flagObservationStatus_seedRate", imputedFlag = "i",
-  byKey = key(data)[1:2])
+  byKey = key(data))
 }
 \arguments{
 \item{data}{The data.table object containing the seed data, typically as
@@ -43,9 +43,6 @@ should be assigned to the seedMethodFlag?}
 
 \item{byKey}{A character vector of the column name(s) of data which should
 be treated as keys for performing the imputation.}
-
-\item{missingFlag}{A character value indicating a missing value in the
-observation flag.  Currently unused.  Michael?}
 }
 \value{
 No value is returned, instead data is modified by filling in

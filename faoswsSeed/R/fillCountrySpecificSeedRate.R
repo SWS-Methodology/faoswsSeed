@@ -2,6 +2,11 @@
 ##' 
 ##' @param data The seed data.table, typically as produced by a call to
 ##' getAreaData.
+##' @param countryVariable The column name of data that specifies the country
+##' code variable.  This is needed to join with the table from the database.
+##' @param commodityVariable The column name of data that specifies the
+##' commodity code variable.  This is needed to join with the table from the
+##' database.
 ##' @param countrySpecificData A data.table with data describing seed rates for
 ##' each country.
 ##' 
@@ -12,13 +17,16 @@
 ##' 
 
 fillCountrySpecificSeedRate = function(data,
+    countryVariable = "geographicAreaM49",
+    commodityVariable = "measuredItemCPC",
     countrySpecificData = getCountrySpecificSeedRate()){
     
     ## Data Quality Checks
     stopifnot(is(data, "data.table"))
     stopifnot(is(countrySpecificData, "data.table"))
     
-    ## Fill in the country Specific rates          
+    ## Fill in the country Specific rates
+    setkeyv(data, cols = c(countryVariable, commodityVariable))
     data[countrySpecificData,
          `:=`(c("Value_seedRate", "flagObservationStatus_seedRate"),
               list(i.Value_seedRate, i.flagObservationStatus_seedRate)),

@@ -43,7 +43,7 @@ imputeSeed = function(data,
                       areaSownObsFlag = "flagObservationStatus_measuredElement_5212",
                       seedRateValue = "Value_seedRate",
                       seedRateFlag = "flagObservationStatus_seedRate",
-                      imputedFlag = "i", byKey = key(data)[1:2]){
+                      imputedFlag = "i", byKey = key(data)){
 
     ## Data Quality Checks
     stopifnot(is(data, "data.table"))

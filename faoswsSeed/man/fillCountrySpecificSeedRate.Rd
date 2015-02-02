@@ -4,12 +4,20 @@
 \alias{fillCountrySpecificSeedRate}
 \title{Fill country specific seed rates}
 \usage{
-fillCountrySpecificSeedRate(data,
+fillCountrySpecificSeedRate(data, countryVariable = "geographicAreaM49",
+  commodityVariable = "measuredItemCPC",
   countrySpecificData = getCountrySpecificSeedRate())
 }
 \arguments{
 \item{data}{The seed data.table, typically as produced by a call to
 getAreaData.}
+
+\item{countryVariable}{The column name of data that specifies the country
+code variable.  This is needed to join with the table from the database.}
+
+\item{commodityVariable}{The column name of data that specifies the
+commodity code variable.  This is needed to join with the table from the
+database.}
 
 \item{countrySpecificData}{A data.table with data describing seed rates for
 each country.}

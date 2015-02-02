@@ -17,7 +17,24 @@ saveSeedData = function(data){
     ## Data Quality Checks
     stopifnot(is(data, "data.table"))
     
-    ## First, filter the data by removing any invalid date/country combinations
+    ## Remove columns to match the database
+    requiredColumns = c("geographicAreaM49", "measuredItemCPC",
+                        "timePointYears", "Value_measuredElement_5212",
+                        "flagObservationStatus_measuredElement_5212",
+                        "flagMethod_measuredElement_5212",
+                        "Value_measuredElement_5312",
+                        "flagObservationStatus_measuredElement_5312",
+                        "flagMethod_measuredElement_5312",
+                        "Value_measuredElement_5525",
+                        "flagObservationStatus_measuredElement_5525",
+                        "flagMethod_measuredElement_5525")
+    data = data[, requiredColumns, with = FALSE]
+    missingColumns = requiredColumns[!requiredColumns %in% colnames(data)]
+    if(length(missingColumns) > 0)
+        stop("Missing required columns, so data cannot be saved!  Missing:\n",
+             paste0(missingColumns, collapse = "\n"))
+    
+    ## Filter the data by removing any invalid date/country combinations
     areaValidRange = GetCodeList(domain = "agriculture",
                                  dataset = "agriculture",
                                  dimension = "geographicAreaM49")
@@ -33,7 +50,7 @@ saveSeedData = function(data){
                                   format = "%Y-%m-%d"))]
     data = data[is.na(startDate) | date > startDate, ]
     data = data[is.na(endDate) | date < endDate, ]
-    
+        
     ## Save the data back
     SaveData(domain = slot(swsContext.datasets[[1]], "domain"),
              dataset = slot(swsContext.datasets[[1]], "dataset"),

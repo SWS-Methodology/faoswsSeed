@@ -20,6 +20,12 @@
 ##' flag for imputed observations.
 ##' @param imputedMethodFlag The value to be assigned to the method flag for
 ##' imputed observations.
+##' @param byKey Only used if imputationParameters is NULL (if
+##' imputationParameters is not NULL, ensemble imputation is performed and the
+##' byKey variable should be specified in this list).  This value
+##' specifies how the mean seed to harvest ratio should be computed: by
+##' country, globally, or in some other way.  Should be a column name of data,
+##' or NULL (in which case a global mean is used).
 ##' @param imputationParameters A vector containing the parameters to use in
 ##' the imputation of areaSown variable.  If NULL, imputation is done by
 ##' computing the mean ratio of area harvested to area sown and applying that
@@ -37,7 +43,7 @@ imputeAreaSown = function(data, valueAreaSown = "Value_measuredElement_5212",
           flagMethodAreaSown = "flagMethod_measuredElement_5212",
           flagObsAreaHarvested = "flagObservationStatus_measuredElement_5312",
           imputedObsFlag = "I", imputedMethodFlag = "e",
-          imputationParameters = NULL){
+          byKey = NULL, imputationParameters = NULL){
     
     ## Data Quality Checks
     stopifnot(is(data, "data.table"))
@@ -55,33 +61,54 @@ imputeAreaSown = function(data, valueAreaSown = "Value_measuredElement_5212",
     seedRatios = data[, get(valueAreaSown) / get(valueAreaHarvested)]
     if(!all(is.na(seedRatios))){
         if(!is.null(imputationParameters)){ # Impute with ensemble
+            ip = imputationParameters #shorter abbreviation (this is used alot)
+
+            ## Define the areaSownRatio variable/flags:
+            data[, Value_areaSownRatio :=
+                     get(valueAreaSown)/get(valueAreaHarvested)]
+            data[, flagObservationStatus_areaSownRatio :=
+                     aggregateObservationFlag(get(flagObsAreaSown),
+                                              get(flagObsAreaHarvested))]
+            data[, flagMethod_areaSownRatio := "u"]
             ensureImputationInputs(data = data,
-                                   imputationParameters = imputationParameters)
-            data[, areaSownRatio := get(valueAreaSown)/get(valueAreaHarvested)]
-            removeNoInfo(data = data, value = "areaSownRatio",
-                         flag = flagObsAreaSown,
-                         processingParameters = defaultProcessingParameters())
-            remove0M(data = data, value = "areaSownRatio",
-                     flag = flagObsAreaSown)
-            imputeVariable(data = data,
-                           imputationParameters = imputationParameters)
+                                   imputationParameters = ip)
+            remove0M(data = data, value = "Value_areaSownRatio",
+                     flag = "flagObservationStatus_areaSownRatio")
+            
+            ## Impute by ensemble when data exists:
+            keysForEnsemble = data[!is.na(Value_areaSownRatio), unique(get(ip$byKey))]
+            filter = data[, geographicAreaM49 %in% keysForEnsemble]
+            data[filter,
+                 Value_areaSownRatio := ensembleImpute(data[filter,],
+                                                imputationParameters = ip)]
+            ## Impute by global mean otherwise
+            data[!filter,
+                 Value_areaSownRatio := mean(data[, Value_areaSownRatio],
+                                             na.rm = TRUE)]
+            
+            ## Clear the unneeded flag columns:
+            data[, flagObservationStatus_areaSownRatio := NULL]
+            data[, flagMethod_areaSownRatio := NULL]
         } else { # Impute with simple mean
-            data[, areaSownRatio := mean(get(valueAreaSown) / 
-                                        get(valueAreaHarvested), na.rm = TRUE),
-                 by = byKey]
-            data[, replaceIndex := is.na(get(valueAreaSown)) &
-                     !is.na(get(valueAreaHarvested))]
-            data[(replaceIndex), valueAreaSown := get(valueAreaHarvested) *
-                     ratio, with = FALSE]
-            data[(replaceIndex), flagObsAreaSown := imputedObsFlag,
-                 with = FALSE]
-            data[(replaceIndex), flagMethodAreaSown := imputedMethodFlag,
-                 with = FALSE]
-            data[, replaceIndex := NULL]
+            data[, Value_areaSownRatio := mean(get(valueAreaSown) / 
+                        get(valueAreaHarvested), na.rm = TRUE), by = byKey]
         }
+    } else { # If all ratios are missing, assume a ratio of 1
+        data[, Value_areaSownRatio := 1]
     }
-    ## areaSownRatio must be >= 1, so fix any bad imputations
-    data[areaSownRatio < 1, areaSownRatio := 1]
+    ## Value_areaSownRatio must be >= 1, so fix any bad imputations
+    data[Value_areaSownRatio < 1, Value_areaSownRatio := 1]
+    
+    ## Update valueAreaSown with the computed Value_areaSownRatio
+    data[, replaceIndex := is.na(get(valueAreaSown)) &
+         !is.na(get(valueAreaHarvested))]
+    data[(replaceIndex), valueAreaSown := get(valueAreaHarvested) *
+             Value_areaSownRatio, with = FALSE]
+    data[(replaceIndex), flagObsAreaSown := imputedObsFlag,
+         with = FALSE]
+    data[(replaceIndex), flagMethodAreaSown := imputedMethodFlag,
+         with = FALSE]
+    data[, replaceIndex := NULL]
     
     ## If any values are still missing, impute areaSown with areaHarvested
     missingIndex = is.na(data[[valueAreaSown]])

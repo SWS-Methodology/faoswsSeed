@@ -7,8 +7,10 @@
 imputeAreaSown(data, valueAreaSown = "Value_measuredElement_5212",
   valueAreaHarvested = "Value_measuredElement_5312",
   flagObsAreaSown = "flagObservationStatus_measuredElement_5212",
+  flagMethodAreaSown = "flagMethod_measuredElement_5212",
   flagObsAreaHarvested = "flagObservationStatus_measuredElement_5312",
-  imputedObsFlag = "I", imputedMethodFlag = "e")
+  imputedObsFlag = "I", imputedMethodFlag = "e", byKey = NULL,
+  imputationParameters = NULL)
 }
 \arguments{
 \item{data}{The data.table object containing the seed data, usually as
@@ -26,7 +28,23 @@ observation flag for the area sown variable.}
 \item{flagObsAreaHarvested}{The column name of data which contains the
 observation flag for the area harvested variable.}
 
-\item{imputedFlag}{Currently unused: Michael?}
+\item{imputedObsFlag}{The value to be assigned to the observation status
+flag for imputed observations.}
+
+\item{imputedMethodFlag}{The value to be assigned to the method flag for
+imputed observations.}
+
+\item{byKey}{Only used if imputationParameters is NULL (if
+imputationParameters is not NULL, ensemble imputation is performed and the
+byKey variable should be specified in this list).  This value
+specifies how the mean seed to harvest ratio should be computed: by
+country, globally, or in some other way.  Should be a column name of data,
+or NULL (in which case a global mean is used).}
+
+\item{imputationParameters}{A vector containing the parameters to use in
+the imputation of areaSown variable.  If NULL, imputation is done by
+computing the mean ratio of area harvested to area sown and applying that
+to all cases.}
 }
 \value{
 No object is returned, instead the underlying data.table object is
