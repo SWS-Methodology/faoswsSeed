@@ -14,6 +14,8 @@
 ##' the area harvested variable.
 ##' @param flagObsAreaSown The column name of data which contains the
 ##' observation flag for the area sown variable.
+##' @param flagMethodAreaSown The column name of data which contains the
+##' method flag for the area sown variable.
 ##' @param flagObsAreaHarvested The column name of data which contains the
 ##' observation flag for the area harvested variable.
 ##' @param imputedObsFlag The value to be assigned to the observation status

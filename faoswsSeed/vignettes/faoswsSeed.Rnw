@@ -90,9 +90,6 @@ Before we begin, we will need to load the required library
 ## Load libraries
 library(faosws)
 library(faoswsSeed)
-library(faoswsUtil)
-library(faoswsFlag)
-library(faoswsImputation)
 for(file in dir("Documents/Github/sws_imputation/faoswsImputation/R/", full.names = TRUE))
     source(file)
 for(file in dir("Documents/Github/sws_seed/faoswsSeed/R/", full.names = TRUE))

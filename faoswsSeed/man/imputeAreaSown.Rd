@@ -25,6 +25,9 @@ the area harvested variable.}
 \item{flagObsAreaSown}{The column name of data which contains the
 observation flag for the area sown variable.}
 
+\item{flagMethodAreaSown}{The column name of data which contains the
+method flag for the area sown variable.}
+
 \item{flagObsAreaHarvested}{The column name of data which contains the
 observation flag for the area harvested variable.}
 
