@@ -76,5 +76,5 @@ imputeSeed = function(data,
                      seedRateValue = get(seedRateValue),
                      seedRateFlag = get(seedRateFlag),
                      imputedFlag = imputedFlag)), by = byKey]
-    invisible(data[, `:=`(c(seedRateValue, seedRateFlag), NULL)])
+    data[, `:=`(c(seedRateValue, seedRateFlag), NULL)]
 }

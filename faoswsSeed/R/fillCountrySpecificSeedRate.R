@@ -25,10 +25,16 @@ fillCountrySpecificSeedRate = function(data,
     stopifnot(is(data, "data.table"))
     stopifnot(is(countrySpecificData, "data.table"))
     
+    ## Create the new columns
+    data[, Value_seedRate := NA]
+    data[, flagObservationStatus_seedRate := NA]
+    
     ## Fill in the country Specific rates
+    okey = key(data)
     setkeyv(data, cols = c(countryVariable, commodityVariable))
     data[countrySpecificData,
          `:=`(c("Value_seedRate", "flagObservationStatus_seedRate"),
               list(i.Value_seedRate, i.flagObservationStatus_seedRate)),
          allow.cartesian = TRUE]
+    setkeyv(data, okey)
 }

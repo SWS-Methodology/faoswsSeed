@@ -66,7 +66,7 @@ opts_chunk$set(fig.path = 'figure/', fig.align = 'center', fig.show = 'hold',
                warning = FALSE, message = FALSE, error = FALSE, tidy = FALSE,
                results = 'markup', eval = TRUE, echo = TRUE, cache = FALSE)
 options(replace.assign = TRUE, width = 80)
-assign("depthtrigger", 10, data.table:::.global)
+assign("depthtrigger", 80, data.table:::.global)
 @ 
 
 \section{Introduction}
@@ -90,10 +90,8 @@ Before we begin, we will need to load the required library
 ## Load libraries
 library(faosws)
 library(faoswsSeed)
-for(file in dir("Documents/Github/sws_imputation/faoswsImputation/R/", full.names = TRUE))
-    source(file)
-for(file in dir("Documents/Github/sws_seed/faoswsSeed/R/", full.names = TRUE))
-    source(file)
+library(faoswsImputation)
+library(faoswsUtil)
 library(data.table)
 library(ggplot2)
 @ 
@@ -209,6 +207,13 @@ measuredItemCPC code.  This is a requirement for imputeAreaSown: it can only
 handle one CPC code at a time.  A future goal of this package is to add an
 additional function that calls imputeAreaSown for each individual CPC code.
 
+Additionally, note that the defaultLm model could be problematic: predictions
+in the later years for the left graph give ratios of less than 1.  These don't
+make sense: you can't sow less area than your harvest.  There is a check within
+the code that corrects any imputed values less than 1 (by setting it to 1);
+however, the analyst should ensure that the models they use do not impute
+values smaller than 1 as a good practice.
+
 Note that this ensemble model seems to generate improved estimates of area sown
 rates in this scenario.  However, in most scenarios, area sown is not
 available.  Moreover, if it is, it is generally available for almost all years.
@@ -216,12 +221,15 @@ The usual scenario would be more like the following example:
 
 <<>>=
 data = seedData[measuredItemCPC == "0111", ]
+data[geographicAreaM49 == 100,
+     .(time = timePointYears, areaSown = Value_measuredElement_5212,
+       areaHarvested = Value_measuredElement_5312)]
 imputeAreaSown(data = data, imputationParameters = imputationParams)
-data[geographicAreaM49 == 100 & measuredItemCPC == "0111",
+data[geographicAreaM49 == 100,
      .(time = timePointYears, areaSown = Value_measuredElement_5212,
        areaHarvested = Value_measuredElement_5312, Value_areaSownRatio)]
 imputeAreaSown(data = data)
-data[geographicAreaM49 == 100 & measuredItemCPC == "0111",
+data[geographicAreaM49 == 100,
      .(time = timePointYears, areaSown = Value_measuredElement_5212,
        areaHarvested = Value_measuredElement_5312, Value_areaSownRatio)]
 @
@@ -246,15 +254,15 @@ available in the specific\_seed\_rate table.
 <<>>=
 # countrySpecificData = getCountrySpecificSeedRate()
 countrySpecificData = data.table(
-    geographicAreaM49 = c("100", "348", "400", "804", "894"),
+    geographicAreaM49 = c("100", "348", "400"),
     measuredItemCPC = "0111",
-    Value_seedRate = c(222, 213, 115, 241, 95),
-    flagObservationStatus_seedRate = c("E", "E", "", "E", "E"))
+    Value_seedRate = c(222, 213, 115),
+    flagObservationStatus_seedRate = c("E", "E", ""))
 setkeyv(countrySpecificData, c("geographicAreaM49", "measuredItemCPC"))
-data = fillCountrySpecificSeedRate(data = data,
-    countrySpecificData = countrySpecificData)
+fillCountrySpecificSeedRate(data = data,
+                            countrySpecificData = countrySpecificData)
 head(data, 1)
-data[1:10, Value_seedRate]
+data[, Value_seedRate]
 @
 
 The getCountrySpecificSeedRate function simply pulls the specific\_seed\_rate
@@ -262,29 +270,24 @@ table from the database.  This table is also the default value for
 countrySpecificData in the fillCountrySpecificSeedRate function, so generally
 it will not need to be created as here (although it could be created manually
 from the commented out line above).  However, for vignette creation, it was
-simpler to just create the part of the table we use at the time of the writing,
-and this is what is done here.  The fillCountrySpecificSeedRate function
-adds an additional two columns to data with the seedRate value and observation
-flags.
+simpler to just create the part of the table we used at the time of the
+writing, and this is what is done here.  The fillCountrySpecificSeedRate
+function adds an additional two columns to data with the seedRate value and
+observation flags.
 
 <<>>=
 # generalSeedData = getCountryGeneralSeedRate()
 generalSeedData = data.table(measuredItemCPC = "0111", Value_seedRate = 151.14,
                              flagObservationStatus_seedRate = "")
 setkeyv(generalSeedData, "measuredItemCPC")
-data = fillGeneralSeedRate(data = data,
-    generalSeedData = generalSeedData)
+fillGeneralSeedRate(data = data,
+                    generalSeedData = generalSeedData)
 head(data, 1)
-data[1:10, Value_seedRate]
+data[, Value_seedRate]
 @
 
-Note that nothing has changed after running this second function.  This is
-expected, as the seed rate value has been estimated from the specific data.
-
-If the specific\_seed\_rate table had not provided a value for this
-country/commodity pair, then the first code block in this section would have
-set Value\_seedRate to NA.  Then, this second code block would have updated the
-NA to a default value from the default table.
+This function updates all the NA values to the (``global'') default seeding
+rate for this commodity.
 
 \subsection{Estimate Seed Usage}
 
@@ -318,5 +321,10 @@ saveSeedData(data)
 Note: this function assumes certain swsContext files exist within your
 workspace, although it does not require you to pass them to it.  So, be careful
 not to rm those files!
+
+<<echo=FALSE>>=
+# Reset the depthtrigger to 3 so normal printing works fine again.
+assign("depthtrigger", 3, data.table:::.global)
+@
 
 \end{document}

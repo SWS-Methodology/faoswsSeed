@@ -27,6 +27,9 @@ fillGeneralSeedRate = function(data,
     data[generalSeedData, `:=`(c("generalSeedRate", "generalSeedFlag"),
             list(i.Value_seedRate, i.flagObservationStatus_seedRate)),
         allow.cartesian = TRUE]
+    ## If no data exists for general case, add columns of NA
+    if(!"generalSeedRate" %in% colnames(data))
+        data[, c("generalSeedRate", "generalSeedFlag") := list(NA, NA)]
     data[is.na(Value_seedRate),
          `:=`(c("Value_seedRate", "flagObservationStatus_seedRate"),
               list(generalSeedRate, generalSeedFlag))]
