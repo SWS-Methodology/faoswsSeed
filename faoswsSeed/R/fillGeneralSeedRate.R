@@ -24,9 +24,12 @@ fillGeneralSeedRate = function(data,
     ## fill in the general rates
     okey = key(data)
     setkeyv(data, key(generalSeedData))
-    data[is.na(Value_seedRate), ][generalSeedData,
-                                  `:=`(c("Value_seedRate"),
-                                       list(i.Value_seedRate)),
-                                  allow.cartesian = TRUE]
+    data[generalSeedData, `:=`(c("generalSeedRate", "generalSeedFlag"),
+            list(i.Value_seedRate, i.flagObservationStatus_seedRate)),
+        allow.cartesian = TRUE]
+    data[is.na(Value_seedRate),
+         `:=`(c("Value_seedRate", "flagObservationStatus_seedRate"),
+              list(generalSeedRate, generalSeedFlag))]
+    data[, `:=`(c("generalSeedRate", "generalSeedFlag"), list(NULL, NULL))]
     setkeyv(data, okey)
 }
