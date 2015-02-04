@@ -71,7 +71,7 @@ imputeAreaSown = function(data, valueAreaSown = "Value_measuredElement_5212",
             data[, flagObservationStatus_areaSownRatio :=
                      aggregateObservationFlag(get(flagObsAreaSown),
                                               get(flagObsAreaHarvested))]
-            data[, flagMethod_areaSownRatio := "u"]
+            data[, flagMethod_areaSownRatio := "e"]
             ensureImputationInputs(data = data,
                                    imputationParameters = ip)
             remove0M(data = data, value = "Value_areaSownRatio",
@@ -87,16 +87,16 @@ imputeAreaSown = function(data, valueAreaSown = "Value_measuredElement_5212",
             data[!filter,
                  Value_areaSownRatio := mean(data[, Value_areaSownRatio],
                                              na.rm = TRUE)]
-            
-            ## Clear the unneeded flag columns:
-            data[, flagObservationStatus_areaSownRatio := NULL]
-            data[, flagMethod_areaSownRatio := NULL]
         } else { # Impute with simple mean
             data[, Value_areaSownRatio := mean(get(valueAreaSown) / 
                         get(valueAreaHarvested), na.rm = TRUE), by = byKey]
+            data[, flagObservationStatus_areaSownRatio := "I"]
+            data[, flagMethod_areaSownRatio := "e"]
         }
     } else { # If all ratios are missing, assume a ratio of 1
         data[, Value_areaSownRatio := 1]
+        data[, flagObservationStatus_areaSownRatio := "I"]
+        data[, flagMethod_areaSownRatio := "e"]
     }
     ## Value_areaSownRatio must be >= 1, so fix any bad imputations
     data[Value_areaSownRatio < 1, Value_areaSownRatio := 1]
