@@ -9,8 +9,8 @@ imputeSeed(data, seedValue = "Value_measuredElement_5525",
   seedObsFlag = "flagObservationStatus_measuredElement_5525",
   areaSownValue = "Value_measuredElement_5212",
   areaSownObsFlag = "flagObservationStatus_measuredElement_5212",
-  seedRateValue = "Value_seedRate",
-  seedRateFlag = "flagObservationStatus_seedRate", imputedFlag = "i",
+  seedRateValue = "Value_areaSownRatio",
+  seedRateFlag = "flagObservationStatus_areaSownRatio", imputedFlag = "i",
   byKey = key(data))
 }
 \arguments{

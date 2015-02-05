@@ -42,6 +42,7 @@ imputeSeed = function(data,
                       areaSownValue = "Value_measuredElement_5212",
                       areaSownObsFlag = "flagObservationStatus_measuredElement_5212",
                       seedRateValue = "Value_areaSownRatio",
+                      seedRateFlag = "flagObservationStatus_areaSownRatio",
                       imputedFlag = "i", byKey = key(data)){
 
     ## Data Quality Checks

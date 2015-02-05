@@ -11,11 +11,11 @@ saveSeedData(data)
 the database.}
 }
 \value{
-No R objects are returned, as this functions purpose is solely to
+No R objects are returned, as this function's purpose is solely to
 write to the database.
 }
 \description{
-This function takes the a seed data dataset and saves it back to the
+This function takes the seed data dataset and saves it back to the
 database.
 }
 
