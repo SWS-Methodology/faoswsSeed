@@ -188,6 +188,9 @@ Or, we can estimate the ratio via an ensemble method (from faoswsImputation):
 
 <<>>=
 imputationParams = defaultImputationParameters(variable = "seed")
+## Coerce type to character instead of default factor type
+imputationParams$flagTable$flagObservationStatus =
+    as.character(imputationParams$flagTable$flagObservationStatus)
 imputationParams$ensembleModels = list(
     defaultMean = ensembleModel(model = defaultMean, extrapolationRange = Inf,
                                 level = "countryCommodity"),

@@ -19,9 +19,9 @@ saveSeedData = function(data){
     
     ## Remove columns to match the database
     requiredColumns = c("geographicAreaM49", "measuredItemCPC",
-                        "timePointYears", "Value_measuredElement_5212",
-                        "flagObservationStatus_measuredElement_5212",
-                        "flagMethod_measuredElement_5212",
+                        "timePointYears", "Value_measuredElement_5025",
+                        "flagObservationStatus_measuredElement_5025",
+                        "flagMethod_measuredElement_5025",
                         "Value_measuredElement_5312",
                         "flagObservationStatus_measuredElement_5312",
                         "flagMethod_measuredElement_5312",

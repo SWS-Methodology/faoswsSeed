@@ -24,8 +24,7 @@
 ##' @export
 ##' 
 
-imputeSeedDomain = function(data, imputationParameters, byKey = NULL,
-                            environment = parent.frame(1)){
+imputeSeedDomain = function(data, imputationParameters, byKey = NULL){
     
     ## Add columns for later imputations (needed for checks)
     data[, Value_areaSownRatio := NA]

@@ -4,8 +4,7 @@
 \alias{imputeSeedDomain}
 \title{Impute Seed Domain}
 \usage{
-imputeSeedDomain(data, imputationParameters, byKey = NULL,
-  environment = parent.frame(1))
+imputeSeedDomain(data, imputationParameters, byKey = NULL)
 }
 \arguments{
 \item{data}{The data.table object containing the seed data.}
