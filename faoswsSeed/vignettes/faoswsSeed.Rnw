@@ -193,11 +193,11 @@ imputationParams$flagTable$flagObservationStatus =
     as.character(imputationParams$flagTable$flagObservationStatus)
 imputationParams$ensembleModels = list(
     defaultMean = ensembleModel(model = defaultMean, extrapolationRange = Inf,
-                                level = "countryCommodity"),
+                                level = "local"),
     globalMean = ensembleModel(model = defaultGlobalMean,
-                               extrapolationRange = Inf, level = "commodity"),
+                               extrapolationRange = Inf, level = "global"),
     defaultLm = ensembleModel(model = defaultLm, extrapolationRange = Inf,
-                              level = "countryCommodity"))
+                              level = "local"))
 temp = seedData[measuredItemCPC == "01330", ]
 imputeAreaSown(data = temp, imputationParameters = imputationParams)
 temp[geographicAreaM49 == 348 & measuredItemCPC == "01330",
