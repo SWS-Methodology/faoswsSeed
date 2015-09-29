@@ -9,5 +9,4 @@ getAllYears()
 \description{
 Description
 }
-\keyword{internal}
 
