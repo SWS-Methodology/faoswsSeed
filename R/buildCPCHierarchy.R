@@ -1,10 +1,12 @@
 ##' Build CPC Hierarchy
 ##' 
-##' <DESCRIPTION>
+##' Function the build CPC Hierarchy
 ##' 
-##' @param
+##' @param data
+##' @param cocItemVar
+##' @param levels
 ##' 
-##' @return
+##' @return modifies the data object
 ##' 
 
 buildCPCHierarchy = function(data, cpcItemVar, levels = 3){

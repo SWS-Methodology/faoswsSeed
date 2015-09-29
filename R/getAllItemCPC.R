@@ -1,11 +1,8 @@
 ##' Get All Item CPC
 ##' 
-##' <DESCRIPTION>
+##' Description
 ##' 
-##' @param
-##' 
-##' @return
-##' 
+
 
 ## Function to obtain all CPC item 
 getAllItemCPC = function(){

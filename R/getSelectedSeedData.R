@@ -2,9 +2,6 @@
 ##' 
 ##' <DESCRIPTION>
 ##' 
-##' @param
-##' 
-##' @return
 ##' 
 
 getSelectedSeedData = function(dataContext){
