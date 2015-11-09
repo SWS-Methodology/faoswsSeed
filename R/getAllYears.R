@@ -1,10 +1,9 @@
 ##' Get All Years
 ##' 
-##' <DESCRIPTION>
+##' Description
 ##' 
-##' @param
+##'
 ##' 
-##' @return
 ##' 
 
 getAllYears = function(){

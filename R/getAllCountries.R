@@ -1,10 +1,9 @@
 ##' Get All Countries
 ##' 
-##' <DESCRIPTION>
+##' Description
 ##' 
-##' @param
+##'
 ##' 
-##' @return
 ##' 
 
 getAllCountries = function(){

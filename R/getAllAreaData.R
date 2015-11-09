@@ -1,10 +1,9 @@
 ##' Get All Area Data
 ##' 
-##' <DESCRIPTION>
+##' Description
 ##' 
-##' @param
+##'
 ##' 
-##' @return
 ##' 
 
 getAllAreaData = function(){
