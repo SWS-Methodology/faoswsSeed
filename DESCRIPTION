@@ -12,7 +12,16 @@ URL: https://github.com/rockclimber112358/sws_seed
 License: GPL (>= 3)
 Imports:
 Depends:
-    faoswsFlag (>= 0.1.1), faoswsUtil (>= 0.1.2), faosws (>= 0.3.2), data.table (>= 1.9.2)
+    faoswsFlag (>= 0.1.1),
+    faoswsUtil (>= 0.1.2),
+    faosws (>= 0.3.2),
+    data.table (>= 1.9.2)
+swsDatasetDepends:
+    agriculture:agriculture
+    WorldBank:wb_climate
+    specific_seed_rate
+    default_seed_rate
+swsModuleDepends:
 LazyData: yes
 ZipData: no
 VignetteBuilder: knitr

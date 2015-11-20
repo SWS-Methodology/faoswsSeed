@@ -177,7 +177,7 @@ ratio within each country individually:
 
 <<>>=
 temp = copy(seedData)
-imputeAreaSown(data = temp, valueAreaSown = "Value_measuredElement_5212",
+imputeAreaSown(data = temp, codeAreaSown = "5212",
                byKey = "geographicAreaM49")
 temp[geographicAreaM49 == 348 & measuredItemCPC == "01330",
      .(time = timePointYears, areaSown = Value_measuredElement_5212,

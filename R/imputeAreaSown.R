@@ -39,13 +39,20 @@
 ##' @export
 ##' 
 
-imputeAreaSown = function(data, valueAreaSown = "Value_measuredElement_5025",
-          valueAreaHarvested = "Value_measuredElement_5312",
-          flagObsAreaSown = "flagObservationStatus_measuredElement_5025",
-          flagMethodAreaSown = "flagMethod_measuredElement_5025",
-          flagObsAreaHarvested = "flagObservationStatus_measuredElement_5312",
-          imputedObsFlag = "I", imputedMethodFlag = "e",
-          byKey = NULL, imputationParameters = NULL){
+imputeAreaSown = function(data, codeAreaHarvested = "5312",
+                          codeAreaSown = "5212", imputedObsFlag = "I",
+                          imputedMethodFlag = "e", byKey = NULL,
+                          imputationParameters = NULL){
+    
+    ## Define column names
+    valueAreaHarvested = paste0("Value_measuredElement_", codeAreaHarvested)
+    flagObsAreaHarvested = paste0("flagObservationStatus_measuredElement_",
+                                  codeAreaHarvested)
+    flagMetAreaHarvested = paste0("flagMethod_measuredElement_",
+                                  codeAreaHarvested)
+    valueAreaSown = paste0("Value_measuredElement_", codeAreaSown)
+    flagObsAreaSown = paste0("flagObservationStatus_measuredElement_", codeAreaSown)
+    flagMetAreaSown = paste0("flagMethod_measuredElement_", codeAreaSown)
     
     ## Data Quality Checks
     stopifnot(is(data, "data.table"))
@@ -80,13 +87,16 @@ imputeAreaSown = function(data, valueAreaSown = "Value_measuredElement_5025",
             ## Impute by ensemble when data exists:
             keysForEnsemble = data[!is.na(Value_areaSownRatio), unique(get(ip$byKey))]
             filter = data[, geographicAreaM49 %in% keysForEnsemble]
-            data[filter,
-                 Value_areaSownRatio := ensembleImpute(data[filter,],
-                                                imputationParameters = ip)]
+            dataForEnsemble = data[filter, ]
+            otherData = data[!filter, ]
+            imputeVariable(dataForEnsemble, imputationParameters = ip)
+            dataForEnsemble[, ensembleVariance := NULL]
             ## Impute by global mean otherwise
-            data[!filter,
+            otherData[!filter,
                  Value_areaSownRatio := mean(data[, Value_areaSownRatio],
                                              na.rm = TRUE)]
+            newData = rbind(dataForEnsemble, otherData)
+            stop("How can we update data correctly while still returning by reference?")
         } else { # Impute with simple mean
             data[, temporaryRatio := get(valueAreaSown) / 
                                      get(valueAreaHarvested)]
