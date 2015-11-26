@@ -8,16 +8,8 @@
 ##' 
 ##' @param data The data.table object containing the seed data, usually as
 ##' created by getAreaData.
-##' @param valueAreaSown The column name of data which contains the value of 
-##' the area sown variable.
-##' @param valueAreaHarvested The column name of data which contains the value of 
-##' the area harvested variable.
-##' @param flagObsAreaSown The column name of data which contains the
-##' observation flag for the area sown variable.
-##' @param flagMethodAreaSown The column name of data which contains the
-##' method flag for the area sown variable.
-##' @param flagObsAreaHarvested The column name of data which contains the
-##' observation flag for the area harvested variable.
+##' @param codeAreaHarvested The element code for the area harvested variable.
+##' @param codeAreaSown The element code for the area sown variable.
 ##' @param imputedObsFlag The value to be assigned to the observation status
 ##' flag for imputed observations.
 ##' @param imputedMethodFlag The value to be assigned to the method flag for
@@ -96,7 +88,13 @@ imputeAreaSown = function(data, codeAreaHarvested = "5312",
                  Value_areaSownRatio := mean(data[, Value_areaSownRatio],
                                              na.rm = TRUE)]
             newData = rbind(dataForEnsemble, otherData)
-            stop("How can we update data correctly while still returning by reference?")
+            
+            ## Bind in new data:
+            oldKey = key(data)
+            tempKey = grep("^(?!flag|Value)", colnames(data), perl = TRUE, value = TRUE)
+            setkeyv(data, tempKey)
+            setkeyv(newData, tempKey)
+            data[newData, Value_areaSownRatio := i.Value_areaSownRatio]
         } else { # Impute with simple mean
             data[, temporaryRatio := get(valueAreaSown) / 
                                      get(valueAreaHarvested)]
@@ -122,7 +120,7 @@ imputeAreaSown = function(data, codeAreaHarvested = "5312",
              Value_areaSownRatio, with = FALSE]
     data[(replaceIndex), flagObsAreaSown := imputedObsFlag,
          with = FALSE]
-    data[(replaceIndex), flagMethodAreaSown := imputedMethodFlag,
+    data[(replaceIndex), flagMetAreaSown := imputedMethodFlag,
          with = FALSE]
     data[, replaceIndex := NULL]
     
@@ -130,5 +128,5 @@ imputeAreaSown = function(data, codeAreaHarvested = "5312",
     missingIndex = is.na(data[[valueAreaSown]])
     data[missingIndex, c(valueAreaSown) := get(valueAreaHarvested)]
     data[missingIndex, c(flagObsAreaSown) := get(flagObsAreaHarvested)]
-    data[missingIndex, c(flagMethodAreaSown) := imputedMethodFlag]
+    data[missingIndex, c(flagMetAreaSown) := imputedMethodFlag]
 }
