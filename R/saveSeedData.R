@@ -39,7 +39,7 @@ saveSeedData = function(data){
     
     ## Save the data back
     SaveData(domain = "agriculture",
-             dataset = "agriculture",
+             dataset = "aproduction",
              data = data,
              normalized = FALSE)
 }
