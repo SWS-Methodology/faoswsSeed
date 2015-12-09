@@ -29,6 +29,7 @@ suppressMessages({
   library(ggplot2)
 })
 
+library(faoswsSeed)
 
 ## We use bootstrapping to estimate variance, so we should set the seed here to
 ## allow for reproducible results. NO MORE!
@@ -50,15 +51,15 @@ flagMethodPrefix = "flagMethod_measuredElement_"
 updateModel = TRUE
 
 ## set up for the test environment and parameters
-R_SWS_SHARE_PATH = Sys.getenv("R_SWS_SHARE_PATH")
-DEBUG_MODE = Sys.getenv("R_DEBUG_MODE")
 
-if(!exists("DEBUG_MODE") || DEBUG_MODE == "") {
+if(CheckDebug()) {
   if(Sys.info()[7] == "Golini"){ # Nata's work computer
     SetClientFiles(dir = "~/R certificate files/Production/")
-    files = dir("~/GitHub/faoswsSeed/R", full.names = TRUE)
     # token = "7823c00b-b82e-47bc-8708-1be103ac91e4" # Michael's token
     # token = "95d4f013-3ef3-44c6-99b1-cb431f2b7ae8" # Josh's token
+    token = "d986d102-c3ea-4aa8-8da8-9355edc67fe0" # Nata's token 
+  } else if(Sys.info()[7] == "campbells") {
+    SetClientFiles(dir = "~/Documents/certificates/production")
     token = "d986d102-c3ea-4aa8-8da8-9355edc67fe0" # Nata's token 
   } else {
     stop("User not yet implemented!")
@@ -69,11 +70,7 @@ if(!exists("DEBUG_MODE") || DEBUG_MODE == "") {
     baseUrl = "https://hqlprswsas1.hq.un.fao.org:8181/sws",
     token = token
   )  
-  
-  sapply(files, source)
 }
-
-
 
 if(updateModel){
   finalModelData = 

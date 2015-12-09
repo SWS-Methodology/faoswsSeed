@@ -2,7 +2,7 @@
 ##' 
 ##' <DESCRIPTION>
 ##' 
-##' 
+##' @export
 
 getWorldBankClimateData = function(){
     ## allCountries =

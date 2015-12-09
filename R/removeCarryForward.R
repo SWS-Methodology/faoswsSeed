@@ -2,7 +2,7 @@
 ##' 
 ##' <DESCRIPTION>
 ##' 
-##' 
+##' @export
 
 removeCarryForward = function(data, variable){
     data[, variance := var(.SD[[variable]], na.rm = TRUE),

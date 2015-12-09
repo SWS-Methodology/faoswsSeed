@@ -2,7 +2,7 @@
 ##' 
 ##' <DESCRIPTION>
 ##' 
-##' 
+##' @export
 
 mergeAllSeedData = function(seedData, ...){
     explanatoryData = list(...)
