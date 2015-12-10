@@ -40,7 +40,7 @@ imputeSeedDomain = function(data, imputationParameters, byKey = NULL){
         stopifnot(byKey %in% colnames(data))
     requiredColumns = c("geographicAreaM49", "measuredItemCPC",
                         "timePointYears")
-    for(code in c("5212", "5312", "5525"))
+    for(code in c("5025", "5312", "5525"))
         requiredColumns = c(requiredColumns, paste0(c("Value_measuredElement_",
                                    "flagObservationStatus_measuredElement_",
                                    "flagMethod_measuredElement_"), code))
@@ -52,11 +52,11 @@ imputeSeedDomain = function(data, imputationParameters, byKey = NULL){
     ## Run the imputation
     for(item in data[, unique(measuredItemCPC)]){
         subset = data[measuredItemCPC == item, ]
-        removeZeroConflict(data = subset, value1 = "Value_measuredElement_5212", 
+        removeZeroConflict(data = subset, value1 = "Value_measuredElement_5025", 
                 value2 = "Value_measuredElement_5312",
-                observationFlag1 = "flagObservationStatus_measuredElement_5212",
+                observationFlag1 = "flagObservationStatus_measuredElement_5025",
                 observationFlag2 = "flagObservationStatus_measuredElement_5312",
-                methodFlag1 = "flagMethod_measuredElement_5212",
+                methodFlag1 = "flagMethod_measuredElement_5025",
                 methodFlag2 = "flagMethod_measuredElement_5312")
         imputeAreaSown(data = subset,
                        imputationParameters = imputationParameters,

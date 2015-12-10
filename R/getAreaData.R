@@ -22,7 +22,7 @@
 ##' @export
 ##'  
 
-getAreaData = function(dataContext, areaSownElementCode = "5212",
+getAreaData = function(dataContext, areaSownElementCode = "5025",
                        areaHarvestedElementCode = "5312",
                        seedElementCode = "5525"){
     

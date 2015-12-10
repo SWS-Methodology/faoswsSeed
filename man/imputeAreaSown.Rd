@@ -4,7 +4,7 @@
 \alias{imputeAreaSown}
 \title{Get the area harvested/sown data}
 \usage{
-imputeAreaSown(data, codeAreaHarvested = "5312", codeAreaSown = "5212",
+imputeAreaSown(data, codeAreaHarvested = "5312", codeAreaSown = "5025",
   imputedObsFlag = "I", imputedMethodFlag = "e", byKey = NULL,
   imputationParameters = NULL)
 }
