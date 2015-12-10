@@ -3,7 +3,7 @@
 ## (1) First get the area harvested/sown data using the R API (GetData)
 ##
 ## (2) Then get the seed rate data after loading them in to the data
-##     base. (GetTableData).
+##     base. (ReadDatatable).
 ##
 ## NOTE (Michael): The codes need to be converted to CPC from FCL.
 ##

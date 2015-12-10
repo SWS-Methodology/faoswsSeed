@@ -17,7 +17,7 @@
 
 getCountryGeneralSeedRate = function(){
     seedGeneral.dt =
-        GetTableData(schemaName = "ess", tableName = "default_seed_rate")
+        ReadDatatable(table = "default_seed_rate")
     ## NOTE (Michael): We again assume the rates are official here
     seedGeneral.dt[, flagObservationStatus_seedRate := ""]
     setnames(seedGeneral.dt,

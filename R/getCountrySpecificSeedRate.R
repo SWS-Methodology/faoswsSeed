@@ -17,7 +17,7 @@
 
 getCountrySpecificSeedRate = function(){
     countrySpecificRate.dt =
-        GetTableData(schemaName = "ess", tableName = "specific_seed_rate")
+        ReadDatatable(table = "specific_seed_rate")
     
     ## NOTE (Michael): We assume all other data collection method are official
     countrySpecificRate.dt[flag != "E", flag := ""]
