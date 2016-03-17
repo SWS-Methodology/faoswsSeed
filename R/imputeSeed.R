@@ -34,6 +34,9 @@
 ##' 
 ##' @export
 ##' 
+##' @import faoswsFlag
+##' @import data.table
+##' 
 
 imputeSeed = function(data,
                       seedValue = "Value_measuredElement_5525",
@@ -52,7 +55,7 @@ imputeSeed = function(data,
                     seedRateFlag, byKey)
     stopifnot(is(columnNames, "character"))
     stopifnot(columnNames %in% colnames(data))
-    stopifnot(checkMethodFlag(imputedFlag))
+    stopifnot(faoswsFlag:::checkMethodFlag(imputedFlag))
     
     each = function(seedValue = seedValue, seedMethodFlag = seedMethodFlag,
                     seedObsFlag = seedObsFlag, areaSownValue = areaSownValue,
@@ -64,7 +67,7 @@ imputeSeed = function(data,
         seedValue[replaceIndex] = newSeedValue[replaceIndex]
         seedMethodFlag[replaceIndex] = imputedFlag
         seedObsFlag[replaceIndex] =
-            aggregateObservationFlag(areaSownObsFlag, seedRateFlag)[replaceIndex]
+            faoswsFlag::aggregateObservationFlag(areaSownObsFlag, seedRateFlag)[replaceIndex]
         list(seedValue, seedMethodFlag, seedObsFlag)
     }
     data[, `:=`(c(seedValue, seedMethodFlag, seedObsFlag),

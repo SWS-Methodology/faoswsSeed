@@ -11,6 +11,8 @@
 ##' 
 ##' @export
 ##' 
+##' @importFrom faosws SaveData
+##' 
 
 saveSeedData = function(data){
     
@@ -38,8 +40,7 @@ saveSeedData = function(data){
     data = faoswsUtil::removeInvalidDates(data)
     
     ## Save the data back
-    SaveData(domain = "agriculture",
-             dataset = "agriculture",
-             data = data,
-             normalized = FALSE)
+    faosws::SaveData(domain = "agriculture",
+                     dataset = "agriculture",
+                     data = data, normalized = FALSE)
 }

@@ -1,8 +1,14 @@
 ##' Get Selected Seed Data
 ##' 
-##' <DESCRIPTION>
+##' This function pulls the seed data from the SWS.
 ##' 
+##' @param dataContext The DatasetKey, containing the relevant countries, years,
+##'   commodities and elements for pulling the seed data.
+##'   
+##' @return The dataset with seed data.
 ##' 
+##' @export 
+##'   
 
 getSelectedSeedData = function(dataContext){
     
