@@ -10,7 +10,7 @@
 ##'     \item{geographicAreaM49: }{The M49 codes specifying the country}
 ##'     \item{measuredItemCPC: }{The codes specifying the commodity}
 ##'     \item{timePointYears: }{The year of the observation}
-##'     \item{Element_5212: }{These three variables correspond to area sown.
+##'     \item{Element_5025: }{These three variables correspond to area sown.
 ##'     The value variable contains the data, and the flagObservationStatus and
 ##'     flagMethod variables contain the flags.}
 ##'     \item{Element_5312: }{Area Harvested}

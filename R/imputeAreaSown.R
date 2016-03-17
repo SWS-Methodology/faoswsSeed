@@ -32,7 +32,7 @@
 ##' 
 
 imputeAreaSown = function(data, codeAreaHarvested = "5312",
-                          codeAreaSown = "5212", imputedObsFlag = "I",
+                          codeAreaSown = "5025", imputedObsFlag = "I",
                           imputedMethodFlag = "e", byKey = NULL,
                           imputationParameters = NULL){
     

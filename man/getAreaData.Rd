@@ -4,7 +4,7 @@
 \alias{getAreaData}
 \title{Function for obtaining the area harvested/sown data}
 \usage{
-getAreaData(dataContext, areaSownElementCode = "5212",
+getAreaData(dataContext, areaSownElementCode = "5025",
   areaHarvestedElementCode = "5312", seedElementCode = "5525")
 }
 \arguments{

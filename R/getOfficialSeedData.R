@@ -2,7 +2,7 @@
 ##' 
 ##' <DESCRIPTION>
 ##' 
-##' 
+##' @export
 
 getOfficialSeedData = function(){
     seedKey = DatasetKey(

@@ -12,6 +12,7 @@
 ##' @return Modifies the data object by adding cpcLvl columns (there will be
 ##'   "levels" columns added).
 ##'   
+##' @export
 
 buildCPCHierarchy = function(data, cpcItemVar, levels = 3){
     data[, `:=`(c(paste0("cpcLvl", 1:levels)),

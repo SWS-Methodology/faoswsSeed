@@ -16,6 +16,7 @@
 ##'   
 ##' @return The data.table with the "carried forward" values removed.
 ##'   
+##' @export
 
 removeCarryForward = function(data, variable){
     data[, variance := var(.SD[[variable]], na.rm = TRUE),

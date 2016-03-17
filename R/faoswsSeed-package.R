@@ -8,4 +8,6 @@
 ##' @author Joshua M. Browning \email{joshua.browning@@fao.org} , Michael. C. J. Kao \email{michael.kao@@fao.org}
 ##' @keywords package
 ##' 
+##' @import data.table
+##' 
 NULL
