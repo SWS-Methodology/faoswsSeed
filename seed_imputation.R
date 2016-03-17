@@ -47,10 +47,12 @@ if(!exists("DEBUG_MODE") || DEBUG_MODE == ""){
     packageDirectory = "~/Documents/Github/sws_seed/faoswsSeed/R/"
     
     ## Get SWS Parameters
+    SetClientFiles("~/R certificate files/QA")
     GetTestEnvironment(
-        baseUrl = "https://hqlprswsas1.hq.un.fao.org:8181/sws",
-        # token = "7823c00b-b82e-47bc-8708-1be103ac91e4" # Michael's token
-        token = "95d4f013-3ef3-44c6-99b1-cb431f2b7ae8" # Josh's token
+        # baseUrl = "https://hqlprswsas1.hq.un.fao.org:8181/sws",
+        # token = "95d4f013-3ef3-44c6-99b1-cb431f2b7ae8" # Josh's token
+        baseUrl = "https://hqlqasws1.hq.un.fao.org:8181/sws",
+        token = "b4995d52-cc4c-4e21-a6d8-de90b1f42e63"
     )
     R_SWS_SHARE_PATH = paste0(apiDirectory, "/..")
 
