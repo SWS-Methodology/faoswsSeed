@@ -166,19 +166,19 @@ seedData[geographicAreaM49 == 348 & measuredItemCPC == "01330",
          .(time = timePointYears, areaSown = Value_measuredElement_5212,
            areaHarvested = Value_measuredElement_5312)]
 temp = copy(seedData)
-imputeAreaSown(data = temp)
+imputeAreaSown(data = temp, codeAreaSown = "5212")
 temp[geographicAreaM49 == 348 & measuredItemCPC == "01330",
      .(time = timePointYears, areaSown = Value_measuredElement_5212,
        areaHarvested = Value_measuredElement_5312, Value_areaSownRatio)]
 @
 
 The areaSownRatio is estimated globally by default.  We could also estimate the
-ratio within each country individually:
+ratio within each country and commodity individually:
 
 <<>>=
 temp = copy(seedData)
 imputeAreaSown(data = temp, codeAreaSown = "5212",
-               byKey = "geographicAreaM49")
+               byKey = c("geographicAreaM49", "measuredItemCPC"))
 temp[geographicAreaM49 == 348 & measuredItemCPC == "01330",
      .(time = timePointYears, areaSown = Value_measuredElement_5212,
        areaHarvested = Value_measuredElement_5312, Value_areaSownRatio)]
@@ -199,7 +199,8 @@ imputationParams$ensembleModels = list(
     defaultLm = ensembleModel(model = defaultLm, extrapolationRange = Inf,
                               level = "local"))
 temp = seedData[measuredItemCPC == "01330", ]
-imputeAreaSown(data = temp, imputationParameters = imputationParams)
+imputeAreaSown(data = temp, codeAreaSown = "5212",
+               imputationParameters = imputationParams)
 temp[geographicAreaM49 == 348 & measuredItemCPC == "01330",
      .(time = timePointYears, areaSown = Value_measuredElement_5212,
        areaHarvested = Value_measuredElement_5312, Value_areaSownRatio)]
@@ -227,11 +228,12 @@ data = seedData[measuredItemCPC == "0111", ]
 data[geographicAreaM49 == 100,
      .(time = timePointYears, areaSown = Value_measuredElement_5212,
        areaHarvested = Value_measuredElement_5312)]
-imputeAreaSown(data = data, imputationParameters = imputationParams)
+imputeAreaSown(data = data, codeAreaSown = "5212",
+               imputationParameters = imputationParams)
 data[geographicAreaM49 == 100,
      .(time = timePointYears, areaSown = Value_measuredElement_5212,
        areaHarvested = Value_measuredElement_5312, Value_areaSownRatio)]
-imputeAreaSown(data = data)
+imputeAreaSown(data = data, codeAreaSown = "5212")
 data[geographicAreaM49 == 100,
      .(time = timePointYears, areaSown = Value_measuredElement_5212,
        areaHarvested = Value_measuredElement_5312, Value_areaSownRatio)]
@@ -298,11 +300,13 @@ The seed usage is estimated by way of the imputeSeed function:
 
 <<>>=
 data[, oldSeed := Value_measuredElement_5525]
-imputeSeed(data)
+imputeSeed(data, areaSownValue = "Value_measuredElement_5212",
+           areaSownObsFlag = "flagObservationStatus_measuredElement_5212")
 data[geographicAreaM49 == 100, .(timePointYears,
                                  AreaSown = Value_measuredElement_5212,
                                  AreaHarvested = Value_measuredElement_5312,
                                  Seed = Value_measuredElement_5525,
+                                 Rate = Value_seedRate,
                                  oldSeed)]
 @
 
