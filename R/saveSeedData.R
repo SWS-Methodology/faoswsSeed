@@ -41,6 +41,6 @@ saveSeedData = function(data){
     
     ## Save the data back
     faosws::SaveData(domain = "agriculture",
-                     dataset = "agriculture",
+                     dataset = "aproduction",
                      data = data, normalized = FALSE)
 }

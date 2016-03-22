@@ -9,7 +9,7 @@ getAllItemCPC = function(){
     itemEdgeList =
         adjacent2edge(
             GetCodeTree(domain = "agriculture",
-                        dataset = "agriculture",
+                        dataset = "aproduction",
                         dimension = itemVar)
         )
     itemEdgeGraph = graph.data.frame(itemEdgeList)

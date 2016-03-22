@@ -10,7 +10,7 @@ getAllAreaData = function(){
     ## Setups    
     areaKey = DatasetKey(
         domain = "agriculture",
-        dataset = "agriculture",
+        dataset = "aproduction",
         dimensions = list(
             Dimension(name = areaVar,
                       keys = getAllCountries()),
