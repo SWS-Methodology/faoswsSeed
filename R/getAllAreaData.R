@@ -13,13 +13,13 @@ getAllAreaData = function(){
         dataset = "aproduction",
         dimensions = list(
             Dimension(name = areaVar,
-                      keys = faoswsSeed:::getAllCountries()),
+                      keys = getAllCountries()),
             Dimension(name = elementVar,
                       keys = c(areaHarvestedElementCode, areaSownElementCode)),
             Dimension(name = itemVar,
-                      keys = faoswsSeed:::getAllItemCPC()),
+                      keys = getAllItemCPC()),
             Dimension(name = yearVar,
-                      keys = faoswsSeed:::getAllYears())
+                      keys = getAllYears())
         )
     )
 

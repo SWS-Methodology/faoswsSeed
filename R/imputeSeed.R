@@ -55,7 +55,7 @@ imputeSeed = function(data,
                     seedRateFlag, byKey)
     stopifnot(is(columnNames, "character"))
     stopifnot(columnNames %in% colnames(data))
-    stopifnot(faoswsFlag:::checkMethodFlag(imputedFlag))
+    stopifnot(faoswsUtil::checkMethodFlag(imputedFlag))
     
     each = function(seedValue = seedValue, seedMethodFlag = seedMethodFlag,
                     seedObsFlag = seedObsFlag, areaSownValue = areaSownValue,
