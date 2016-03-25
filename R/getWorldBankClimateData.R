@@ -30,7 +30,8 @@ getWorldBankClimateData = function(){
         Pivoting(code = "wbIndicator", ascending = TRUE)        
     )
 
-    climateData = GetData(key = newKey, pivoting = newPivot, normalized = FALSE)
+    climateData = GetData(key = newKey, pivoting = newPivot, normalized = FALSE,
+                          flags = FALSE) # No flags in this dataset
     climateData[, timePointYears := as.numeric(timePointYears)]
     climateData
 }

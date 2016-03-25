@@ -47,7 +47,6 @@ valuePrefix = "Value_measuredElement_"
 flagObsPrefix = "flagObservationStatus_measuredElement_"
 flagMethodPrefix = "flagMethod_measuredElement_"
 
-
 updateModel = TRUE
 
 ## set up for the test environment and parameters
@@ -56,11 +55,13 @@ if(CheckDebug()) {
   if(Sys.info()[7] == "Golini"){ # Nata's work computer
     SetClientFiles(dir = "~/R certificate files/Production/")
     # token = "7823c00b-b82e-47bc-8708-1be103ac91e4" # Michael's token
-    # token = "95d4f013-3ef3-44c6-99b1-cb431f2b7ae8" # Josh's token
     token = "d986d102-c3ea-4aa8-8da8-9355edc67fe0" # Nata's token 
   } else if(Sys.info()[7] == "campbells") {
     SetClientFiles(dir = "~/Documents/certificates/production")
     token = "d986d102-c3ea-4aa8-8da8-9355edc67fe0" # Nata's token 
+  } else if(Sys.info()[7] == "josh"){
+    SetClientFiles(dir = "~/R certificate files/Production/")
+    token = "1cd662c7-c68b-4c79-beaf-1e2a28ac617b"
   } else {
     stop("User not yet implemented!")
   }
@@ -73,34 +74,31 @@ if(CheckDebug()) {
 }
 
 if(updateModel){
-  finalModelData = 
-{
-  seed =
-    getOfficialSeedData() %>%
-    removeCarryForward(data = ., variable = "Value_measuredElement_5525") %>%
-    buildCPCHierarchy(data = ., cpcItemVar = itemVar, levels = 3)
+  seed = getOfficialSeedData()
+  seed = removeCarryForward(data = seed,
+                            variable = "Value_measuredElement_5525")
+  seed = buildCPCHierarchy(data = seed, cpcItemVar = itemVar, levels = 3)
   
-  area =
-    getAllAreaData() %>%
-    imputeAreaSown(data = .)
+  area = getAllAreaData()
+  imputeAreaSown(data = area)
   
   climate = getWorldBankClimateData()
   
-} %>%
-  mergeAllSeedData(seedData = seed, area, climate) %>%
-  .[Value_measuredElement_5525 > 1 & Value_measuredElement_5025 > 1, ]%>%
+  finalModelData = mergeAllSeedData(seedData = seed, area, climate)
+  finalModelData = finalModelData[Value_measuredElement_5525 > 1 &
+                                      Value_measuredElement_5025 > 1, ]
   ## We have to remove cases where we do not have temperature, as we cannot create
   ## a model when independent variables are missing.  The predictions would be NA
   ## anyways, and so we wouldn't be saving anything to the database if we left
   ## them in.
-  .[!is.na(Value_wbIndicator_SWS.FAO.TEMP), ]
+  finalModelData = finalModelData[!is.na(Value_wbIndicator_SWS.FAO.TEMP), ]
   
-# Michael's model
-seedLmeModel = 
-  lmer(log(Value_measuredElement_5525) ~ Value_wbIndicator_SWS.FAO.TEMP +
-         timePointYears + 
-         (log(Value_measuredElement_5025)|cpcLvl3/measuredItemCPC:geographicAreaM49),
-       data = finalModelData)
+  # Michael's model
+  seedLmeModel = 
+    lmer(log(Value_measuredElement_5525) ~ Value_wbIndicator_SWS.FAO.TEMP +
+           timePointYears + 
+           (log(Value_measuredElement_5025)|cpcLvl3/measuredItemCPC:geographicAreaM49),
+         data = finalModelData)
 
 # Nata's model
 # seedLmeModel = 
@@ -118,43 +116,40 @@ seedLmeModel =
 }
 
 
-finalPredictData = 
-{
-  if(!updateModel){
-  
-    area =
-      getAllAreaData() %>%
-      imputeAreaSown(data = .)
-    
-    climate = getWorldBankClimateData()
-  }
-  
-  seed =
-    getSelectedSeedData() %>%
-    removeCarryForward(data = ., variable = "Value_measuredElement_5525") %>%
-    buildCPCHierarchy(data = ., cpcItemVar = itemVar, levels = 3)
-  
-} %>%
-  mergeAllSeedData(seedData = seed, area, climate) %>%
-  .[Value_measuredElement_5525 > 1 & Value_measuredElement_5025 > 1, ]%>%
-  ## We have to remove cases where we do not have temperature, as we cannot create
-  ## a model when independent variables are missing.  The predictions would be NA
-  ## anyways, and so we wouldn't be saving anything to the database if we left
-  ## them in.
-  .[!is.na(Value_wbIndicator_SWS.FAO.TEMP), ]
+if(!updateModel){
+  area = getAllAreaData()
+  area = imputeAreaSown(data = area)
+  climate = getWorldBankClimateData()
+}
 
+seed = getSelectedSeedData()
+seed = removeCarryForward(data = seed, variable = "Value_measuredElement_5525")
+seed = buildCPCHierarchy(data = seed, cpcItemVar = itemVar, levels = 3)
+
+finalPredictData = mergeAllSeedData(seedData = seed, area, climate)
+finalPredictData = finalPredictData[Value_measuredElement_5525 > 1 &
+                                        Value_measuredElement_5025 > 1, ]
+## We have to remove cases where we do not have temperature, as we cannot create
+## a model when independent variables are missing.  The predictions would be NA
+## anyways, and so we wouldn't be saving anything to the database if we left
+## them in.
+finalPredictData = finalPredictData[!is.na(Value_wbIndicator_SWS.FAO.TEMP), ]
 
 
 ## Impute selected data
 
-finalPredictData[, predicted := exp(predict(seedLmeModel, newdata = finalPredictData,
-                                              allow.new.levels = TRUE))]
+finalPredictData[, predicted := exp(predict(seedLmeModel,
+                                            newdata = finalPredictData,
+                                            allow.new.levels = TRUE))]
+# ggplot(finalPredictData, aes(x = Value_measuredElement_5525, y = predicted)) +
+#   geom_point()
 
-finalPredictData[(is.na(finalPredictData[["Value_measuredElement_5525"]]) |
-                    finalPredictData[["flagObservationStatus_measuredElement_5525"]] %in% c("E", "I", "T")) &
-               !is.na(predicted),
-             `:=`(c("Value_measuredElement_5525", "flagObservationStatus_measuredElement_5525",
-                    "flagMethod_measuredElement_5525"),
+finalPredictData[(is.na(Value_measuredElement_5525) |
+                  flagObservationStatus_measuredElement_5525 %in% c("E", "I", "T")) &
+                 !is.na(predicted),
+             `:=` (c("Value_measuredElement_5525",
+                     "flagObservationStatus_measuredElement_5525",
+                     "flagMethod_measuredElement_5525"),
                  list(predicted, "I", "e"))]
 
 finalPredictData[, predicted := NULL]
