@@ -8,6 +8,6 @@
 
 getAllCountries = function(){
     GetCodeList(domain = "agriculture",
-                dataset = "agriculture",
+                dataset = "aproduction",
                 dimension = "geographicAreaM49")[type == "country", code]
 }

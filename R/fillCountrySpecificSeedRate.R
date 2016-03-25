@@ -26,8 +26,8 @@ fillCountrySpecificSeedRate = function(data,
     stopifnot(is(countrySpecificData, "data.table"))
     
     ## Create the new columns
-    data[, Value_seedRate := NA]
-    data[, flagObservationStatus_seedRate := NA]
+    data[, Value_seedRate := NA_real_]
+    data[, flagObservationStatus_seedRate := NA_character_]
     
     ## Fill in the country Specific rates
     okey = key(data)

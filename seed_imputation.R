@@ -62,6 +62,9 @@ if(CheckDebug()) {
   } else if(Sys.info()[7] == "josh"){
     SetClientFiles(dir = "~/R certificate files/Production/")
     token = "1cd662c7-c68b-4c79-beaf-1e2a28ac617b"
+  } else if(Sys.info()[7] == "caetano") {
+    SetClientFiles("../.R/Production/")
+    token = "d986d102-c3ea-4aa8-8da8-9355edc67fe0" # Nata's token 
   } else {
     stop("User not yet implemented!")
   }
@@ -72,6 +75,15 @@ if(CheckDebug()) {
     token = token
   )
 }
+
+SetClientFiles("../.R/Production/")
+token = "d986d102-c3ea-4aa8-8da8-9355edc67fe0" # Nata's token
+GetTestEnvironment(
+  ## baseUrl = "https://hqlqasws1.hq.un.fao.org:8181/sws",
+  baseUrl = "https://hqlprswsas1.hq.un.fao.org:8181/sws",
+  token = token
+)
+
 
 if(updateModel){
   seed = getOfficialSeedData()

@@ -8,6 +8,6 @@
 
 getAllYears = function(){
     GetCodeList(domain = "agriculture",
-                dataset = "agriculture",
+                dataset = "aproduction",
                 dimension = "timePointYears")[description != "wildcard", code]
 }
