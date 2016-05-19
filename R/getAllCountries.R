@@ -11,3 +11,4 @@ getAllCountries = function(){
                 dataset = "aproduction",
                 dimension = "geographicAreaM49")[type == "country", code]
 }
+

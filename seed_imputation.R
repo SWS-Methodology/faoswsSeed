@@ -25,8 +25,9 @@ suppressMessages({
   library(igraph)
   library(plyr)
   library(dplyr)
-  library(RJDBC)
+  #library(RJDBC)
   library(ggplot2)
+  library(faoswsFlag)
 })
 
 library(faoswsSeed)
@@ -109,12 +110,6 @@ if(updateModel){
 # qqline(residuals(lossLmeModel))
 }
 
-
-if(!updateModel){
-  area = getAllAreaData()
-  area = imputeAreaSown(data = area)
-  climate = getWorldBankClimateData()
-}
 
 seed = getSelectedSeedData()
 seed = removeCarryForward(data = seed, variable = "Value_measuredElement_5525")
