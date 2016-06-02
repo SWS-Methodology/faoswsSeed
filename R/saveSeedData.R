@@ -37,7 +37,7 @@ saveSeedData = function(data){
              paste0(missingColumns, collapse = "\n"))
     
     ## Filter the data by removing any invalid date/country combinations
-    data = faoswsUtil::removeInvalidDates(data)
+    data = faoswsProcessing::removeInvalidDates(data)
     
     ## Save the data back
     faosws::SaveData(domain = "agriculture",

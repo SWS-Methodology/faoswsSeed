@@ -25,9 +25,10 @@ suppressMessages({
   library(igraph)
   library(plyr)
   library(dplyr)
-  #library(RJDBC)
+  ##library(RJDBC)
   library(ggplot2)
   library(faoswsFlag)
+  library(faoswsProcessing)
 })
 
 library(faoswsSeed)
@@ -111,7 +112,7 @@ if(updateModel){
 }
 
 
-seed = getSelectedSeedData()
+
 seed = removeCarryForward(data = seed, variable = "Value_measuredElement_5525")
 seed = buildCPCHierarchy(data = seed, cpcItemVar = itemVar, levels = 3)
 
@@ -144,3 +145,5 @@ finalPredictData[(is.na(Value_measuredElement_5525) |
 finalPredictData[, predicted := NULL]
 
 saveSeedData(data = finalPredictData)
+
+"Module finished successfully"

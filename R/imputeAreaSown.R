@@ -52,8 +52,8 @@ imputeAreaSown = function(data, codeAreaHarvested = "5312",
                     flagObsAreaHarvested)
     stopifnot(is(columnNames, "character"))
     stopifnot(columnNames %in% colnames(data))
-    stopifnot(checkObservationFlag(imputedObsFlag))
-    stopifnot(checkMethodFlag(imputedMethodFlag))
+    ##stopifnot(checkObservationFlag(imputedObsFlag))
+    ##stopifnot(checkMethodFlag(imputedMethodFlag))
     stopifnot(imputationParameters$variable == "seed")
 
     ## If areaSown is available, compute ratios and use them to impute (either
