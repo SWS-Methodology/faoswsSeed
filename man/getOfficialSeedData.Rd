@@ -4,9 +4,12 @@
 \alias{getOfficialSeedData}
 \title{Get Official Seed Data}
 \usage{
-getOfficialSeedData()
+getOfficialSeedData(areaVar, elementVar, itemVar, yearVar)
+}
+\arguments{
+\item{areaVar}{character. Name of area key in source dataset}
 }
 \description{
-<DESCRIPTION>
+Get Official Seed Data
 }
 
