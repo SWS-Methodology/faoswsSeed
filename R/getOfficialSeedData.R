@@ -1,6 +1,6 @@
 ##' Get Official Seed Data
 ##' 
-##' @param areaVar character. Name of area key in source dataset
+##' 
 ##' 
 ##' @export
 
