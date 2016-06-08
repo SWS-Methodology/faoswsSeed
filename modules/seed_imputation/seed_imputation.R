@@ -29,6 +29,9 @@ suppressMessages({
   library(ggplot2)
   library(faoswsFlag)
   library(faoswsProcessing)
+  library(splines)
+  library(faoswsImputation)
+  
 })
 
 library(faoswsSeed)
