@@ -1,8 +1,8 @@
 Package: faoswsSeed
 Type: Package
 Title: Package to perform the imputation of seed usage for the FAO seed domain
-Version: 0.1.1
-Date: 2016-05-19
+Version: 0.1.2
+Date: 2016-07-06
 Author: Joshua M. Browning <joshua.browning@fao.org>,
     Michael C. J. Kao <michael.kao@fao.org>
 Maintainer: Francesca Rosa <francesca.rosa@fao.org>
