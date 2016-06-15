@@ -7,7 +7,6 @@
 \geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
 \setcounter{secnumdepth}{2}
 \setcounter{tocdepth}{2}
-\usepackage{breakurl}
 \usepackage{hyperref}
 \usepackage[ruled, vlined]{algorithm2e}
 \usepackage{mathtools}
@@ -59,6 +58,7 @@
 }
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 <<setup, include=FALSE, cache=FALSE, echo=FALSE>>=
 library(knitr)
@@ -94,6 +94,8 @@ library(faoswsImputation)
 library(faoswsUtil)
 library(data.table)
 library(ggplot2)
+library(faoswsProcessing)
+
 @ 
 
 \subsection{Pull Data}
@@ -132,7 +134,7 @@ We can't pull this data directly, but the faoswsSeed package has a default
 dataset that would result from this kind of a call:
 
 <<>>=
-seedData
+head(seedData)
 @
 
 The data is somewhat cryptic, as there are alot of codes used, but it's there.
@@ -161,7 +163,7 @@ methods:
 In this example, we have the first scenario (remember, 5212 is the area sown
 code and 5312 is the area harvested).
 
-<<>>=
+<<echo = FALSE>>=
 seedData[geographicAreaM49 == 348 & measuredItemCPC == "01330",
          .(time = timePointYears, areaSown = Value_measuredElement_5212,
            areaHarvested = Value_measuredElement_5312)]
@@ -297,18 +299,6 @@ rate for this commodity.
 \subsection{Estimate Seed Usage}
 
 The seed usage is estimated by way of the imputeSeed function:
-
-<<>>=
-data[, oldSeed := Value_measuredElement_5525]
-imputeSeed(data, areaSownValue = "Value_measuredElement_5212",
-           areaSownObsFlag = "flagObservationStatus_measuredElement_5212")
-data[geographicAreaM49 == 100, .(timePointYears,
-                                 AreaSown = Value_measuredElement_5212,
-                                 AreaHarvested = Value_measuredElement_5312,
-                                 Seed = Value_measuredElement_5525,
-                                 Rate = Value_seedRate,
-                                 oldSeed)]
-@
 
 Not all seeds have been imputed.  To understand why, note that area
 sown is available for all years except the last year.  But, area sown on year
