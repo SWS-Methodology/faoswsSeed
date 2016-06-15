@@ -23,10 +23,27 @@
 ##' @param imputationParameters A vector containing the parameters to use in
 ##' the imputation of areaSown variable.  If NULL, imputation is done by
 ##' computing the mean ratio of area harvested to area sown and applying that
-##' to all cases.
+##' to all cases. See faoswsImputation::defaultImputationParameters()
 ##' 
 ##' @return No object is returned, instead the underlying data.table object is
 ##' modified.
+##' 
+##' @example 
+##' imputeAreaSown(
+##' data=areaPreProcessed
+##' ,
+##' codeAreaHarvested = "5312"
+##' ,
+##' codeAreaSown = "5025"
+##' ,
+##' imputedObsFlag = "I"
+##' ,
+##' imputedMethodFlag = "e"
+##' ,
+##' byKey = NULL
+##' ,
+##' imputationParameters = NULL
+##' )
 ##' 
 ##' @export
 ##' 
@@ -116,8 +133,8 @@ imputeAreaSown = function(data, codeAreaHarvested = "5312",
     ## Update valueAreaSown with the computed Value_areaSownRatio
     data[, replaceIndex := is.na(get(valueAreaSown)) &
          !is.na(get(valueAreaHarvested))]
-    data[(replaceIndex), valueAreaSown := get(valueAreaHarvested) *
-             Value_areaSownRatio, with = FALSE]
+    data [(replaceIndex), valueAreaSown := get(valueAreaHarvested) *
+            Value_areaSownRatio, with = FALSE]
     data[(replaceIndex), flagObsAreaSown := imputedObsFlag,
          with = FALSE]
     data[(replaceIndex), flagMetAreaSown := imputedMethodFlag,
@@ -129,4 +146,18 @@ imputeAreaSown = function(data, codeAreaHarvested = "5312",
     data[missingIndex, c(valueAreaSown) := get(valueAreaHarvested)]
     data[missingIndex, c(flagObsAreaSown) := get(flagObsAreaHarvested)]
     data[missingIndex, c(flagMetAreaSown) := imputedMethodFlag]
+    
+    
+    ##Francesca: many items still have AreaSown = 0 and areaHarvested>0 
+    ##we have to replace areaSown=0 with areaHarvested
+    
+    ## zeroAreaSownIndex = data[,valueAreaSown]==0 & data[,valueAreaHarvested] > 0
+    ##zeroAreaSownIndex = (data[[valueAreaSown]]==0  & data[[valueAreaHarvested]] > 0)
+    
+    
+    ##data[zeroAreaSownIndex, c(valueAreaSown)   := get(valueAreaHarvested)]
+    ##data[zeroAreaSownIndex, c(flagObsAreaSown) := get(flagObsAreaHarvested)]
+    ##data[zeroAreaSownIndex, c(flagMetAreaSown) := imputedMethodFlag]
+    
+    
 }
