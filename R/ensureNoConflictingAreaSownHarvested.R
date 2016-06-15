@@ -4,7 +4,7 @@
 ##' In the seed module for exaple, when area harvested is greater than zero, areaSown can not be
 ##' zero by definition (note that the opposite is allowed)
 ##'
-##' @param data The data to be checked.
+##' @param data The hdata to be checked.
 ##' @param valueColumn1 The first variable for comparison.
 ##' @param valueColumn2 The second variable for comparison.
 ##' @param returnData logical, whether the data should be returned for pipe.
