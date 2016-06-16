@@ -6,9 +6,6 @@
 \usage{
 getOfficialSeedData()
 }
-\arguments{
-\item{areaVar}{character. Name of area key in source dataset}
-}
 \description{
 Get Official Seed Data
 }

@@ -19,8 +19,8 @@
 ##'
 ##' @export
 ensureNoConflictingAreaSownHarvested = function(data,
-                                   areaSown,
-                                   areaHarvested,
+                                   valueColumn1,
+                                   valueColumn2,
                                    returnData = TRUE,
                                    normalised = TRUE,
                                    denormalisedKey = "measuredElement",

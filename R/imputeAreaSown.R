@@ -28,23 +28,6 @@
 ##' @return No object is returned, instead the underlying data.table object is
 ##' modified.
 ##' 
-##' @example 
-##' imputeAreaSown(
-##' data=areaPreProcessed
-##' ,
-##' codeAreaHarvested = "5312"
-##' ,
-##' codeAreaSown = "5025"
-##' ,
-##' imputedObsFlag = "I"
-##' ,
-##' imputedMethodFlag = "e"
-##' ,
-##' byKey = NULL
-##' ,
-##' imputationParameters = NULL
-##' )
-##' 
 ##' @export
 ##' 
 

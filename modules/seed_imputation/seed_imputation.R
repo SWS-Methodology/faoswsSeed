@@ -93,14 +93,14 @@ if(updateModel){
   
   
   
-  ensureFlagValidity(data = seed,
-                     flagObservationVar = "flagObservationStatus_measuredElement_5525",
-                     flagMethodVar = "flagMethod_measuredElement_5525",
-                     returnData = FALSE,
-                     getInvalidData = TRUE)
+## ensureFlagValidity(data = seed,
+##                   flagObservationVar = "flagObservationStatus_measuredElement_5525",
+##                     flagMethodVar = "flagMethod_measuredElement_5525",
+##                     returnData = FALSE,
+##                     getInvalidData = TRUE)
   
   
-  ##Ensure   CorrectMissingValue not necessary because I pull only official data whose ObservationFlag is ""
+##Ensure   CorrectMissingValue not necessary because I pull only official data whose ObservationFlag is ""
   
   ensureCorrectMissingValue(data = seed,
                             valueVar = "Value_measuredElement_5525",
@@ -161,8 +161,8 @@ if(updateModel){
  
   
 ensureNoConflictingAreaSownHarvested(data= imputedArea,
-                                      areaSown= "Value_measuredElement_5025",
-                                      areaHarvested=  "Value_measuredElement_5312",
+                                     valueColumn1= "Value_measuredElement_5025",
+                                     valueColumn2=  "Value_measuredElement_5312",
                                       returnData = FALSE,
                                       normalised = FALSE,
                                       getInvalidData = FALSE)
@@ -233,8 +233,28 @@ finalPredictData[, predicted := exp(predict(seedLmeModel,
 # ggplot(finalPredictData, aes(x = Value_measuredElement_5525, y = predicted)) +
 #   geom_point()
 
+
+finalPredictData= preProcessing(data= finalPredictData,
+                                normalised = FALSE)
+
+finalPredictData=removeManuallyEstimation(finalPredictData,
+                          valueVar= "Value_measuredElement_5525",
+                          observationFlagVar= "flagObservationStatus_measuredElement_5525",
+                          methodFlagVar= "flagMethod_measuredElement_5525")
+
+
+
+
+finalPredictData=removeImputationEstimation(finalPredictData,
+                       valueVar= "Value_measuredElement_5525",
+                       observationFlagVar= "flagObservationStatus_measuredElement_5525",
+                       methodFlagVar= "flagMethod_measuredElement_5525")
+
+
+
+
 finalPredictData[(is.na(Value_measuredElement_5525) |
-                  flagObservationStatus_measuredElement_5525 %in% c("E", "I", "T")) &
+                  flagObservationStatus_measuredElement_5525 %in% c("M")) &
                  !is.na(predicted),
              `:=` (c("Value_measuredElement_5525",
                      "flagObservationStatus_measuredElement_5525",
@@ -264,15 +284,22 @@ ensureFlagValidity(data = finalPredictData,
                    getInvalidData = FALSE) 
 
 
-ensureProtectedData(data = finalPredictData,
-                    domain = "agriculture",
-                    dataset = "aproduction",
-                    flagObservationVar = "flagObservationStatus_measuredElement_5525",
-                    flagMethodVar = "flagMethod_measuredElement_5525",
-                    normalised = FALSE,
-                    returnData = FALSE,
-                    getInvalidData = FALSE
-                    )
+
+finalPredictData[, .(geographicAreaM49, timePointYears, measuredItemCPC,
+                     Value_measuredElement_5525, flagObservationStatus_measuredElement_5525, 
+                     flagMethod_measuredElement_5525)] %>%
+  mutate(timePointYears = as.character(timePointYears)) %>%
+  filter(., (flagObservationStatus_measuredElement_5525 == "I" & 
+               flagMethod_measuredElement_5525 == "e")) %>%
+  ensureProtectedData(data = .,
+                                         domain = "agriculture",
+                                         dataset = "aproduction",
+                                         normalised = FALSE,
+                                         returnData = FALSE,
+                                         getInvalidData = FALSE
+                                         )
+
+
 
 saveSeedData(data = finalPredictData)
 

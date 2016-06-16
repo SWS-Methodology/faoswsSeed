@@ -32,7 +32,7 @@ or NULL (in which case a global mean is used).}
 \item{imputationParameters}{A vector containing the parameters to use in
 the imputation of areaSown variable.  If NULL, imputation is done by
 computing the mean ratio of area harvested to area sown and applying that
-to all cases.}
+to all cases. See faoswsImputation::defaultImputationParameters()}
 }
 \value{
 No object is returned, instead the underlying data.table object is

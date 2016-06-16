@@ -11,12 +11,8 @@
 ##' @param value2 The column name of data corresponding to the second variable.
 ##' @param observationFlag1 The column name of data containing the observation
 ##' flag for the first variable.
-##' @param observationFlag2 The column name of data containing the observation
-##' flag for the second variable.
 ##' @param methodFlag1 The column name of data containing the method flag for
 ##' the first variable.
-##' @param methodFlag2 The column name of data containing the method flag for
-##' the second variable.
 ##' @param missingObservationFlag The flag (character value) which should be
 ##' placed in the observation flag columns to signify a missing value.
 ##' @param missingMethodFlag The flag (character value) which should be placed
