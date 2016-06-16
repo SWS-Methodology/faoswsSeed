@@ -31,15 +31,15 @@ ensureNoConflictingAreaSownHarvested = function(data,
   }
   
   ensureDataInput(dataCopy,
-                  requiredColumn = c(areaSown, areaHarvested),
+                  requiredColumn = c(valueColumn1, valueColumn2),
                   returnData = FALSE)
   conflicting =
-   dataCopy[[areaSown]] < dataCopy[[areaHarvested]]
+   dataCopy[[areaSown]] < dataCopy[[valueColumn2]]
   
   zeroConflicting=
-    dataCopy[[areaSown]]== 0 &
-    dataCopy[[areaHarvested]]!=0
-  
+    dataCopy[[valueColumn1]]== 0 &
+    dataCopy[[valueColumn2]]!=0
+ 
    
   
   conflictingArea =
