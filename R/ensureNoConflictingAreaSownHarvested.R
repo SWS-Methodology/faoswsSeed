@@ -34,7 +34,7 @@ ensureNoConflictingAreaSownHarvested = function(data,
                   requiredColumn = c(valueColumn1, valueColumn2),
                   returnData = FALSE)
   conflicting =
-   dataCopy[[areaSown]] < dataCopy[[valueColumn2]]
+   dataCopy[[valueColumn1]] < dataCopy[[valueColumn2]]
   
   zeroConflicting=
     dataCopy[[valueColumn1]]== 0 &
