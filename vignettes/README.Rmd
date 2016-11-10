@@ -1,0 +1,31 @@
+---
+title: "Seed module"
+author: "Francesca"
+date: "October 20, 2016"
+header-includes:
+  - \usepackage{bbm}
+  - \usepackage{booktabs}
+  - \usepackage{color}
+output: pdf_document
+
+---
+
+```{r set-chunk-options, echo=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+## The R module: preliminary operations
+
+Load the necessary packages:
+
+- list item 1
+- list item 2
+
+1. numbered list item 1
+
+2. numbered list item 2
+
+3. a formula $\sum_{i=1}^n X_i$
