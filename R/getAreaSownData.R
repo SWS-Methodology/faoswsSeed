@@ -6,7 +6,7 @@
 ##' 
 ##' @export
 
-getAllAreaData = function(){
+getAreaSownData = function(){
   ## Setups    
   areaKey = DatasetKey(
     domain = "agriculture",
@@ -15,7 +15,7 @@ getAllAreaData = function(){
       Dimension(name = areaVar,
                 keys = getAllCountries()),
       Dimension(name = elementVar,
-                keys = c(areaSownElementCode,areaHarvestedElementCode)),
+                keys = c(areaSownElementCode)),
       Dimension(name = itemVar,
                 keys = getAllItemCPC()),
       Dimension(name = yearVar,

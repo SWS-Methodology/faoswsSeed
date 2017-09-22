@@ -76,9 +76,13 @@ if(CheckDebug()){
 sessionKey = swsContext.datasets[[1]]
 
 
+#justForYear=getCompleteImputationKey("production")
+#yearCode=justForYear@dimensions$timePointYears@keys
+
+
   seed = getOfficialSeedData()
   
-  
+  seed=as.data.table(seed)
   
   
   ## Seed imput data validation
@@ -93,7 +97,7 @@ sessionKey = swsContext.datasets[[1]]
   
   
   
-  ensureFlagValidity(data = seed,
+  seed=ensureFlagValidity(data = seed,
                     flagObservationVar = "flagObservationStatus_measuredElement_5525",
                       flagMethodVar = "flagMethod_measuredElement_5525",
                       returnData = FALSE,
@@ -127,7 +131,12 @@ sessionKey = swsContext.datasets[[1]]
 
   
  area=getAllAreaData()
-
+ ##area=normalise(area)
+ ##area=expandYear(area)
+ ##area[is.na(Value), ":="(c("flagObservationStatus", "flagMethod"),list("I", "e"))]
+ ##
+ ##area= denormalise(area, denormaliseKey = "measuredElement")
+ 
  ensureValueRange(data = area,
                   ensureColumn = "Value_measuredElement_5312",
                   min = 0,
@@ -246,9 +255,12 @@ autoFlagCorrection = function(data,
   
   
 }
+
+
+
 areaConflictNormalised=autoFlagCorrection(areaConflictNormalised)
 
-ensureFlagValidity(areaConflictNormalised,
+areaConflictNormalised=ensureFlagValidity(areaConflictNormalised,
                    normalised =TRUE,
                    getInvalidData = FALSE,
                    returnData = FALSE) 
@@ -294,11 +306,20 @@ imputedArea=imputeAreaSown(data = areaCleaned,
   
 ## Extrapolate climateData: it means to fill the emply cells with the average temperature
   
+  
+  finalModelData[, Value_wbIndicator_SWS.FAO.TEMP_mean:=mean(Value_wbIndicator_SWS.FAO.TEMP, na.rm=TRUE), by=c("geographicAreaM49")]
+  
    
-  meanTEMP=aggregate(finalModelData[!is.na(Value_wbIndicator_SWS.FAO.TEMP),Value_wbIndicator_SWS.FAO.TEMP],
-             by=list(finalModelData[!is.na(Value_wbIndicator_SWS.FAO.TEMP),geographicAreaM49]),FUN="mean")
-  colnames(meanTEMP)=c("geographicAreaM49","Value_wbIndicator_SWS.FAO.TEMP_mean")
-  finalModelData=merge(finalModelData, meanTEMP, by="geographicAreaM49")
+ # meanTEMP=aggregate(finalModelData[!is.na(Value_wbIndicator_SWS.FAO.TEMP),Value_wbIndicator_SWS.FAO.TEMP],
+ #            by=list(finalModelData[!is.na(Value_wbIndicator_SWS.FAO.TEMP),geographicAreaM49]),FUN="mean")
+ # 
+ # 
+ # colnames(meanTEMP)=c("geographicAreaM49","Value_wbIndicator_SWS.FAO.TEMP_mean")
+ # finalModelData=merge(finalModelData, meanTEMP, by="geographicAreaM49")
+  
+  
+  
+  
   finalModelData[is.na(Value_wbIndicator_SWS.FAO.TEMP) ,
                  Value_wbIndicator_SWS.FAO.TEMP :=  Value_wbIndicator_SWS.FAO.TEMP_mean]
   
@@ -348,41 +369,56 @@ imputedArea=imputeAreaSown(data = areaCleaned,
   
 
 
-seed1 = getSelectedSeedData()
+seedAll = getSelectedSeedData()
+seedAll= normalise(seedAll)
 
-seed1= preProcessing(data= seed1, normalised = FALSE)
+seedAll= expandYear(seedAll)
 
-seed1 = removeCarryForward(data = seed11, variable = "Value_measuredElement_5525")
-
-
-
-
-##seedRemoved=removeNonProtectedFlag(seed,normalised = FALSE)
-
-ensureFlagValidity(seed1,normalised = FALSE,returnData = FALSE, getInvalidData = TRUE)
+seedAll[is.na(Value), ":="(c("flagObservationStatus",
+                             "flagMethod"),
+                           list("M", "u"))]
 
 
+seedAll= denormalise(seedAll, denormaliseKey = "measuredElement")
+##Commodity for which there is at least one data point for seed
+seedCommodity=unique(seedAll[!is.na(Value_measuredElement_5525) & Value_measuredElement_5525!=0, measuredItemCPC])
 
-seed1 = removeCarryForward(data = seed1, variable = "Value_measuredElement_5525")
+
+##seed1 = removeCarryForward(data = seed1, variable = "Value_measuredElement_5525")
+seed1 = ensureFlagValidity(seedAll,normalised = FALSE,returnData = FALSE, getInvalidData = FALSE)
+seed1= preProcessing(data= seed1, normalised = TRUE)
+seed1=removeNonProtectedFlag(seed1,normalised = TRUE)
+
+seed1 =denormalise(seed1, denormaliseKey = "measuredElement")
+
+
 seed1 = buildCPCHierarchy(data = seed1, cpcItemVar = itemVar, levels = 3)
 
-finalPredictData = mergeAllSeedData(seedData = seed1, imputedArea, climate)
+#finalPredictData = mergeAllSeedData(seedData = seed1, imputedArea, climate)
 
 
-
-
+finalPredictData = merge(seed1,imputedArea, by=c("geographicAreaM49","measuredItemCPC","timePointYears"),all.x = TRUE)
+finalPredictData= merge(finalPredictData,climate, by=c("geographicAreaM49","timePointYears"))
 
 ## We have to remove cases where we do not have temperature, as we cannot create
 ## a model when independent variables are missing.  The predictions would be NA
 ## anyways, and so we wouldn't be saving anything to the database if we left
 ## them in.
 
-meanTEMP1=aggregate(finalPredictData[!is.na(Value_wbIndicator_SWS.FAO.TEMP),Value_wbIndicator_SWS.FAO.TEMP],
-                    by=list(finalPredictData[!is.na(Value_wbIndicator_SWS.FAO.TEMP),geographicAreaM49]),FUN="mean")
 
-colnames(meanTEMP1)=c("geographicAreaM49","Value_wbIndicator_SWS.FAO.TEMP_mean")
+finalPredictData[, Value_wbIndicator_SWS.FAO.TEMP_mean:=mean(Value_wbIndicator_SWS.FAO.TEMP, na.rm=TRUE), by=c("geographicAreaM49")]
 
-finalPredictData=merge(finalPredictData, meanTEMP1, by="geographicAreaM49")
+
+#meanTEMP1=aggregate(finalPredictData[!is.na(Value_wbIndicator_SWS.FAO.TEMP),Value_wbIndicator_SWS.FAO.TEMP],
+#                    by=list(finalPredictData[!is.na(Value_wbIndicator_SWS.FAO.TEMP),geographicAreaM49]),FUN="mean")
+#
+#colnames(meanTEMP1)=c("geographicAreaM49","Value_wbIndicator_SWS.FAO.TEMP_mean")
+#
+#finalPredictData=merge(finalPredictData, meanTEMP1, by="geographicAreaM49")
+
+
+
+
 finalPredictData=finalPredictData[is.na(Value_wbIndicator_SWS.FAO.TEMP) ,
                                   Value_wbIndicator_SWS.FAO.TEMP :=  Value_wbIndicator_SWS.FAO.TEMP_mean]
 
@@ -392,16 +428,22 @@ finalPredictData=finalPredictData[is.na(Value_wbIndicator_SWS.FAO.TEMP) ,
 
 finalPredictData[,Value_wbIndicator_SWS.FAO.TEMP_mean:=NULL]
 
+finalPredictData[,Value_wbIndicator_SWS.FAO.PREC:=NULL]
 
 
-##finalPredictData = finalPredictData[!is.na(Value_wbIndicator_SWS.FAO.TEMP), ]
+finalPredictData = finalPredictData[!is.na(Value_measuredElement_5025), ]
 
+finalPredictData = finalPredictData[!is.na(Value_wbIndicator_SWS.FAO.TEMP), ]
 
 ## Impute selected data
 
 finalPredictData[, predicted := exp(predict(seedLmeModel,
                                             newdata = finalPredictData,
                                             allow.new.levels = TRUE))]
+
+
+
+
 
 
 
@@ -432,13 +474,21 @@ tobeOverwritten=!finalPredictData[,flagComb] %in% protected[,comb]
 ##                 list(predicted, "I", "e"))]
 
 
-finalPredictData[(is.na(Value_measuredElement_5525) |tobeOverwritten) &
-                   !is.na(predicted)&
-                   !is.na(Value_measuredElement_5025),
+
+finalPredictData[is.na(Value_measuredElement_5525)  & !is.na(predicted),
                  `:=` (c("Value_measuredElement_5525",
                          "flagObservationStatus_measuredElement_5525",
                          "flagMethod_measuredElement_5525"),
                        list(predicted, "I", "e"))]
+
+
+#finalPredictData[(is.na(Value_measuredElement_5525) |tobeOverwritten) &
+#                   !is.na(predicted)&
+#                   !is.na(Value_measuredElement_5025),
+#                 `:=` (c("Value_measuredElement_5525",
+#                         "flagObservationStatus_measuredElement_5525",
+#                         "flagMethod_measuredElement_5525"),
+#                       list(predicted, "I", "e"))]
 
 
 
@@ -467,14 +517,24 @@ ensureFlagValidity(data = finalPredictData,
 
 finalPredictData_imputed=finalPredictData[, .(geographicAreaM49, timePointYears, measuredItemCPC,
                                               Value_measuredElement_5525,flagObservationStatus_measuredElement_5525, 
-                                              flagMethod_measuredElement_5525)] %>%
-  mutate(timePointYears = as.character(timePointYears)) %>%
-  filter(., (flagObservationStatus_measuredElement_5525 == "I" & 
-               flagMethod_measuredElement_5525 == "e")) 
+                                              flagMethod_measuredElement_5525)] 
+
+
+## Seed [t] should not be imputed for all the commodities which have an Area Harvested (or Area Sown)
+finalPredictData_imputed=finalPredictData_imputed[measuredItemCPC %in% seedCommodity]
+
+finalPredictData_imputed= finalPredictData_imputed[,timePointYears:=as.character(timePointYears)] 
+
+
+finalPredictData_imputed =finalPredictData_imputed[flagObservationStatus_measuredElement_5525 == "I" & 
+                                                   flagMethod_measuredElement_5525 == "e",]
 
 
 
 finalPredictData_imputed= normalise(finalPredictData_imputed)
+
+
+finalPredictData_imputed=removeInvalidDates(data = finalPredictData_imputed, context = sessionKey) 
 
 ## This function cannot be run anymore because some (M,-) flag combinations have been overwritten.
 ##In particular the (M,-) values for seed use for which we have an area sown different from NA

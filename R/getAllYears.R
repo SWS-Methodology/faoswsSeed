@@ -7,7 +7,7 @@
 ##' 
 
 getAllYears = function(){
-    GetCodeList(domain = "agriculture",
-                dataset = "aproduction",
-                dimension = "timePointYears")[description != "wildcard", code]
+  getCompleteImputationKey("production")
+  
+  justForYear@dimensions$timePointYears@keys
 }

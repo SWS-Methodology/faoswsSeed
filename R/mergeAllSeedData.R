@@ -19,7 +19,7 @@ mergeAllSeedData = function(seedData, ...){
         keys = intersect(colnames(x), colnames(y))
         data.table::setkeyv(x, keys)
         data.table::setkeyv(y, keys)
-        merge(x, y, all.x = TRUE)
+        merge(x, y, all.x = TRUE,all.y = TRUE)
         },
         x = explanatoryData, init = seedData
     )

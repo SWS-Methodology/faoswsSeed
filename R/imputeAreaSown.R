@@ -98,6 +98,7 @@ imputeAreaSown = function(data, codeAreaHarvested = "5312",
         } else { # Impute with simple mean
             data[, temporaryRatio := get(valueAreaSown) / 
                                      get(valueAreaHarvested)]
+          
             data[, Value_areaSownRatio := mean(
                 temporaryRatio[temporaryRatio < Inf], na.rm = TRUE),
                 by = byKey]
@@ -110,37 +111,42 @@ imputeAreaSown = function(data, codeAreaHarvested = "5312",
         data[, flagObservationStatus_areaSownRatio := "I"]
         data[, flagMethod_areaSownRatio := "e"]
     }
+    
+    ## We did not take into account all the combinations so, if the ratio is still NA 
+    ## then replace it with 1 and assume that area sown is the same as area harvested
+    
+    data[is.na(Value_areaSownRatio), flagObservationStatus_areaSownRatio := "I"]
+    data[is.na(Value_areaSownRatio), flagMethod_areaSownRatio := "e"]
+    data[is.na(Value_areaSownRatio), Value_areaSownRatio := 1]
+    
     ## Value_areaSownRatio must be >= 1, so fix any bad imputations
     data[Value_areaSownRatio < 1, Value_areaSownRatio := 1]
     
-    ## Update valueAreaSown with the computed Value_areaSownRatio
+    ## Update the na valueAreaSown with the computed Value_areaSownRatio
     data[, replaceIndex := is.na(get(valueAreaSown)) &
-         !is.na(get(valueAreaHarvested))]
+           !is.na(get(valueAreaHarvested))]
+
+    
+    
     data [(replaceIndex), valueAreaSown := get(valueAreaHarvested) *
             Value_areaSownRatio, with = FALSE]
+    
     data[(replaceIndex), flagObsAreaSown := imputedObsFlag,
          with = FALSE]
+    
     data[(replaceIndex), flagMetAreaSown := imputedMethodFlag,
          with = FALSE]
+    
     data[, replaceIndex := NULL]
     
     ## If any values are still missing, impute areaSown with areaHarvested
-    missingIndex = is.na(data[[valueAreaSown]])
+    missingIndex = is.na(data[[valueAreaSown]]) & !is.na(data[[valueAreaHarvested]])
     data[missingIndex, c(valueAreaSown) := get(valueAreaHarvested)]
-    data[missingIndex, c(flagObsAreaSown) := get(flagObsAreaHarvested)]
+    data[missingIndex, c(flagObsAreaSown) := imputedObsFlag]
     data[missingIndex, c(flagMetAreaSown) := imputedMethodFlag]
     
     
-    ##Francesca: many items still have AreaSown = 0 and areaHarvested>0 
-    ##we have to replace areaSown=0 with areaHarvested
     
-    ## zeroAreaSownIndex = data[,valueAreaSown]==0 & data[,valueAreaHarvested] > 0
-    ##zeroAreaSownIndex = (data[[valueAreaSown]]==0  & data[[valueAreaHarvested]] > 0)
-    
-    
-    ##data[zeroAreaSownIndex, c(valueAreaSown)   := get(valueAreaHarvested)]
-    ##data[zeroAreaSownIndex, c(flagObsAreaSown) := get(flagObsAreaHarvested)]
-    ##data[zeroAreaSownIndex, c(flagMetAreaSown) := imputedMethodFlag]
     
     
 }
