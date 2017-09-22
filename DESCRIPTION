@@ -22,7 +22,7 @@ swsDatasetDepends: agriculture:agriculture
     WorldBank:wb_climate
     specific_seed_rate
     default_seed_rate
-swsModuleDepends: 
+swsModuleDepends: faoswsProduction
 LazyData: yes
 ZipData: no
 VignetteBuilder: knitr
