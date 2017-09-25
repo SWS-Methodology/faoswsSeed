@@ -7,7 +7,7 @@
 ##' 
 
 getAllYears = function(){
-  getCompleteImputationKey("production")
+  justForYear=getCompleteImputationKey("production")
   
   justForYear@dimensions$timePointYears@keys
 }
