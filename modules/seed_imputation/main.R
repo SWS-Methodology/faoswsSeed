@@ -74,6 +74,8 @@ if(CheckDebug()){
 
 
 sessionKey = swsContext.datasets[[1]]
+completeImputationKey=getCompleteImputationKey()
+lastYear=as.numeric(max(completeImputationKey@dimensions$timePointYears@keys))
 
 
 #justForYear=getCompleteImputationKey("production")
@@ -128,7 +130,8 @@ sessionKey = swsContext.datasets[[1]]
   
 ## AREA data
   
-
+##------------------------------------------------------------------------------------------------------------------------------------
+##------------------------------------------------------------------------------------------------------------------------------------
   
  area=getAllAreaData()
  ##area=normalise(area)
@@ -285,13 +288,14 @@ imputedArea=imputeAreaSown(data = areaCleaned,
                                         normalised = FALSE,
                                         getInvalidData = FALSE)
   
-
+  ##here it might be better to rum removeInvalidFlags
  ensureFlagValidity(imputedArea,
                    normalised =FALSE,
                    getInvalidData = TRUE)
 
 
-  
+ ##------------------------------------------------------------------------------------------------------------------------------------
+ ##------------------------------------------------------------------------------------------------------------------------------------
   
   
   
@@ -372,7 +376,7 @@ imputedArea=imputeAreaSown(data = areaCleaned,
 seedAll = getSelectedSeedData()
 seedAll= normalise(seedAll)
 
-seedAll= expandYear(seedAll)
+seedAll= expandYear(seedAll, newYears = lastYear)
 
 seedAll[is.na(Value), ":="(c("flagObservationStatus",
                              "flagMethod"),
@@ -381,7 +385,7 @@ seedAll[is.na(Value), ":="(c("flagObservationStatus",
 
 seedAll= denormalise(seedAll, denormaliseKey = "measuredElement")
 ##Commodity for which there is at least one data point for seed
-seedCommodity=unique(seedAll[!is.na(Value_measuredElement_5525) & Value_measuredElement_5525!=0, measuredItemCPC])
+##seedCommodity=unique(seedAll[!is.na(Value_measuredElement_5525) & Value_measuredElement_5525!=0, measuredItemCPC])
 
 
 ##seed1 = removeCarryForward(data = seed1, variable = "Value_measuredElement_5525")
@@ -398,7 +402,7 @@ seed1 = buildCPCHierarchy(data = seed1, cpcItemVar = itemVar, levels = 3)
 
 
 finalPredictData = merge(seed1,imputedArea, by=c("geographicAreaM49","measuredItemCPC","timePointYears"),all.x = TRUE)
-finalPredictData= merge(finalPredictData,climate, by=c("geographicAreaM49","timePointYears"))
+finalPredictData= merge(finalPredictData,climate, by=c("geographicAreaM49","timePointYears"),all.x = TRUE)
 
 ## We have to remove cases where we do not have temperature, as we cannot create
 ## a model when independent variables are missing.  The predictions would be NA
@@ -521,7 +525,7 @@ finalPredictData_imputed=finalPredictData[, .(geographicAreaM49, timePointYears,
 
 
 ## Seed [t] should not be imputed for all the commodities which have an Area Harvested (or Area Sown)
-finalPredictData_imputed=finalPredictData_imputed[measuredItemCPC %in% seedCommodity]
+##finalPredictData_imputed=finalPredictData_imputed[measuredItemCPC %in% seedCommodity]
 
 finalPredictData_imputed= finalPredictData_imputed[,timePointYears:=as.character(timePointYears)] 
 
