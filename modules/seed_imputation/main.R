@@ -552,9 +552,26 @@ finalPredictData_imputed=removeInvalidDates(data = finalPredictData_imputed, con
 ## )
 ## 
 
+
+## Be sure that only the feasible country-commodity conbinations will be saved in the session.
+## This choice is based on the utilization_tables (based on the past allocation of the available primary commodity
+## to the possible utlizations)
+
+utilizationTable=ReadDatatable("utilization_table")
+
+
+seedUtilization=unique(utilizationTable[element=="seed", .(area_code, item_code)])
+setnames(seedUtilization, c("area_code", "item_code"), c("geographicAreaM49", "measuredItemCPC"))
+
+seedInThePast=finalPredictData_imputed[seedUtilization,,on= c("geographicAreaM49", "measuredItemCPC")]
+
+seedInThePast=seedInThePast[!is.na(timePointYears)]
+
+ensureProtectedData(finalPredictData_imputed,"production", "aproduction")
+
 SaveData(domain = sessionKey@domain,
          dataset = sessionKey@dataset,
-         data = finalPredictData_imputed)
+         data = seedInThePast)
 
 
 
