@@ -32,6 +32,7 @@ suppressMessages({
   library(splines)
   library(faoswsImputation)
   library(faoswsEnsure)
+  library(sendmailR)
   
 })
 
@@ -456,9 +457,10 @@ finalPredictData[,flagComb:=paste(flagObservationStatus_measuredElement_5525,
                                   flagMethod_measuredElement_5525,sep=";")]
 
 protected=flagValidTable[Protected==TRUE,]
+
 protected[,comb:=paste(flagObservationStatus,flagMethod,sep=";")]
 
-tobeOverwritten=!finalPredictData[,flagComb] %in% protected[,comb]
+tobeOverwritten=(!(finalPredictData[,flagComb] %in% protected[,comb]))
 
 
 
@@ -479,7 +481,7 @@ tobeOverwritten=!finalPredictData[,flagComb] %in% protected[,comb]
 
 
 
-finalPredictData[is.na(Value_measuredElement_5525)  & !is.na(predicted),
+finalPredictData[tobeOverwritten & !is.na(predicted),
                  `:=` (c("Value_measuredElement_5525",
                          "flagObservationStatus_measuredElement_5525",
                          "flagMethod_measuredElement_5525"),
@@ -534,23 +536,12 @@ finalPredictData_imputed =finalPredictData_imputed[flagObservationStatus_measure
                                                    flagMethod_measuredElement_5525 == "e",]
 
 
-
 finalPredictData_imputed= normalise(finalPredictData_imputed)
-
 
 finalPredictData_imputed=removeInvalidDates(data = finalPredictData_imputed, context = sessionKey) 
 
-## This function cannot be run anymore because some (M,-) flag combinations have been overwritten.
-##In particular the (M,-) values for seed use for which we have an area sown different from NA
-##  
-## ensureProtectedData(data = finalPredictData_imputed,
-##                     domain = "agriculture",
-##                     dataset = "aproduction",
-##                     normalised = TRUE,
-##                     returnData = FALSE,
-##                     getInvalidData = TRUE
-## )
-## 
+
+
 
 
 ## Be sure that only the feasible country-commodity conbinations will be saved in the session.
@@ -567,7 +558,53 @@ seedInThePast=finalPredictData_imputed[seedUtilization,,on= c("geographicAreaM49
 
 seedInThePast=seedInThePast[!is.na(timePointYears)]
 
-ensureProtectedData(finalPredictData_imputed,"production", "aproduction")
+
+protectedOverwritten=ensureProtectedData(finalPredictData_imputed,"production", "aproduction",getInvalidData = TRUE)
+
+## The module is actually structured to avoid to overwrite protected figures. This means that all the lines flagged as M,- 
+## are NEVER overwritten. The previous function checks if some protected figures have been overwritten by mistake
+## and the following lines send an email to the analyst in case the module erroneously overwrites protected figures.
+
+## In theory, there could be some M,- figures that could be overwritten: it is the theoretically
+## rare situation where the Seed component is flagged as M,- while the Area Sown variable has a value different
+## than NA . That's why in the past, this function has been commented.
+
+
+
+if(nrow(protectedOverwritten)>0){
+  
+  if(!CheckDebug() ){
+    
+    createErrorAttachmentObject = function(testName,
+                                           testResult,
+                                           R_SWS_SHARE_PATH){
+      errorAttachmentName = paste0(testName, ".csv")
+      errorAttachmentPath =
+        paste0(R_SWS_SHARE_PATH, "/rosa/", errorAttachmentName)
+      write.csv(testResult, file = errorAttachmentPath,
+                row.names = FALSE)
+      errorAttachmentObject = mime_part(x = errorAttachmentPath,
+                                        name = errorAttachmentName)
+      errorAttachmentObject
+    }
+    
+    bodyWithAttachmentNoBalanced=
+      createErrorAttachmentObject("ProtectedFigureOverwritten_SeedModule",
+                                  protectedOverwritten,
+                                  R_SWS_SHARE_PATH)
+    
+    
+    sendmail(from = "sws@fao.org",
+             to = swsContext.userEmail,
+             subject = "Warning: some proteced figures have been overwritten!",
+             msg = bodyWithAttachmentNoBalanced)
+    
+  } 
+  
+
+
+}
+  
 
 SaveData(domain = sessionKey@domain,
          dataset = sessionKey@dataset,
@@ -575,5 +612,22 @@ SaveData(domain = sessionKey@domain,
 
 
 
+
+
+if(!CheckDebug()){
+  
+  msg = "Seed module Completed Successfully"
+  message(msg)
+  
+  ## Initiate email
+  from = "sws@fao.org"
+  to = swsContext.userEmail
+  subject = "Seed imputation plugin has correctly run"
+  body = paste0("The Seed module successfully ran. You can browse results in the session: ", sessionKey@sessionId)
+  
+  
+  sendmail(from = from, to = to, subject = subject, msg = body)
+  
+} 
 
 "Module finished successfully"
